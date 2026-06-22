@@ -55,120 +55,175 @@ Once `uv --version` works, continue to the next step.
 
 # Getting Started
 
-Run the following commands:
-
 ```bash
 git clone https://github.com/QB12-Group1/railway-management-system.git
 cd railway-management-system
 uv sync --group dev
 uv run pre-commit install
+```
+
+---
+
+# Working on a Task / Feature
+
+All development happens on **feature branches created from `dev`**.
+
+Branch format:
+
+```
+feature/<your-name>/<task-name>
+```
+
+Example:
+
+```
+feature/ali/implement-railway-model
+feature/ilia/implement-train-model
+```
+
+---
+
+## Step‑by‑Step Workflow
+
+### 1. Checkout `dev` and pull the latest updates
+
+Always start from the latest version of `dev`.
+
+```bash
 git checkout dev
 git pull origin dev
-git checkout -b feature/<your-name>
+```
+
+---
+
+### 2. Create your feature branch
+
+Create a new branch for your assigned task.
+
+```bash
+git checkout -b feature/<your-name>/<task-name>
 ```
 
 Example:
 
 ```bash
-git checkout -b feature/ali
+git checkout -b feature/ilia/implement-train-model
+```
+
+Each branch should represent **one task or feature**.
+
+---
+
+### 3. Start working on your task
+
+Make the changes needed for your feature or bug fix.
+
+---
+
+### 4. Add your changes
+
+Stage the files you modified.
+
+```bash
+git add .
 ```
 
 ---
 
-# Working on the Project
-
-After making changes:
+### 5. Commit your changes
 
 ```bash
-git add .
 git commit -m "describe your change"
-git push
 ```
 
-Then open a **Pull Request**:
+Example:
+
+```bash
+git commit -m "Implement Train Model"
+```
+
+---
+
+### 6. Push your branch
+
+Push your feature branch to GitHub.
+
+```bash
+git push -u origin feature/<your-name>/<task-name>
+```
+
+Example:
+
+```bash
+git push -u origin feature/ilia/implement-train-model
+```
+
+---
+
+### 7. Open a Pull Request
+
+Open a PR on GitHub:
 
 ```
-feature/... → dev
+feature/<your-name>/<task-name> → dev
 ```
 
 Your code will be reviewed before merging.
 
+After the PR is merged, the feature branch will be deleted.
+
 ---
 
-# Updating Your Branch with Latest dev
+# Keeping Your Branch Updated
 
-Before opening or updating a PR:
+If `dev` changes while you are working, update your branch.
 
 ```bash
 git checkout dev
 git pull origin dev
-git checkout feature/<your-branch>
+git checkout feature/<your-name>/<task-name>
 git merge dev
 ```
 
-Resolve conflicts if needed and push again.
+Resolve conflicts if necessary, then push again.
 
 ---
 
-## Code Quality Checks (Pre-commit)
+# Code Quality Checks (Pre-commit)
 
 This repository uses **pre-commit hooks** to automatically check code quality before every commit.
 
-The following tools run automatically:
+Tools used:
 
 - **Ruff** – linting and formatting
 - **Pyright** – static type checking
 - **pre-commit hooks** – whitespace fixes and file checks
 
-Because of this setup, **you cannot successfully create a commit if there are linting or type errors**.
+If checks fail:
 
-When you run:
+1. Read the error output
+2. Fix the issue
+3. Stage the changes again
+4. Commit again
 
-```bash
-git commit -m "your message"
-```
-
-pre-commit will automatically run all checks.
-
-### What you should do
-
-If a check fails:
-
-1. Read the output printed in the terminal.
-2. Fix the issue the tool is pointing out.
-3. Stage the changes again.
-4. Commit again.
-
-Example workflow:
+Example:
 
 ```bash
 git add .
 git commit -m "add train scheduling logic"
 ```
 
-If Ruff automatically fixes issues, you may need to stage the changes again:
+If Ruff auto-fixes files you may need to stage again:
 
 ```bash
 git add .
 git commit -m "add train scheduling logic"
 ```
 
-### Running checks manually
-
-You can run all checks manually with:
+Run checks manually:
 
 ```bash
 uv run pre-commit run --all-files
 ```
 
-This is useful before pushing large changes.
-
-### Important
-
-Please make sure:
-
-- Your code passes **linting**
-- Your code passes **type checking**
-- There are **no errors reported by pre-commit**
-
-Commits that fail these checks will be blocked until the issues are resolved.
+Make sure your code passes all checks before pushing.
