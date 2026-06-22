@@ -5,6 +5,8 @@ from app.menus.main_menu import MainMenu
 
 """Application entry point."""
 
+# something
+
 
 def main() -> None:
     """Create controller and start the application."""
