@@ -1,6 +1,6 @@
 # Railway Management System
 
-Backend project for managing railway operations.
+Terminal project for managing railway operations.
 
 ---
 
