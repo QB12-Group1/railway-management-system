@@ -12,7 +12,7 @@ Before setting up the project, install the following tools:
 
 Pyright is written in TypeScript and requires Node.js.
 
-- **Download:** [nodejs.org](https://nodejs.org/en/download/current)
+- **Download:** [nodejs](https://nodejs.org/en/download/current)
 - **Verify:**
 
   ```bash
