@@ -4,11 +4,26 @@ Terminal project for managing railway operations.
 
 ---
 
-# Install uv (Required)
+## Prerequisites
+
+Before setting up the project, install the following tools:
+
+### 1. Node.js (Required for Pyright)
+
+Pyright is written in TypeScript and requires Node.js.
+
+- **Download:** [nodejs.org](https://nodejs.org/en/download/current)
+- **Verify:**
+  ```bash
+  node --version
+  npm --version
+  ```
+
+### 2. uv (Python dependency manager)
 
 This project uses **uv** for dependency management and running tools.
 
-## Linux / macOS
+#### Linux / macOS
 
 If you have **curl**:
 
@@ -22,34 +37,25 @@ If you do **not** have curl:
 wget -qO- https://astral.sh/uv/install.sh | sh
 ```
 
-## Windows (PowerShell)
+#### Windows (PowerShell)
 
 ```powershell
 powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
 ```
 
-## Alternative: Install with pip
+#### Alternative: Install with pip
 
 ```bash
 pip install uv
 ```
 
-If installed with pip, you can still run the same commands:
-
-```bash
-python -m uv sync --group dev
-python -m uv run pre-commit install
-```
-
-## Verify Installation
+#### Verify Installation
 
 ```bash
 uv --version
 ```
 
-If the command is not found, restart your **terminal/shell** so the uv path is added to your environment.
-
-Once `uv --version` works, continue to the next step.
+*(If the command is not found, restart your terminal so the path is added to your environment.)*
 
 ---
 
