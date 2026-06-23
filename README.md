@@ -14,6 +14,7 @@ Pyright is written in TypeScript and requires Node.js.
 
 - **Download:** [nodejs.org](https://nodejs.org/en/download/current)
 - **Verify:**
+
   ```bash
   node --version
   npm --version
@@ -55,7 +56,7 @@ pip install uv
 uv --version
 ```
 
-*(If the command is not found, restart your terminal so the path is added to your environment.)*
+_(If the command is not found, restart your terminal so the path is added to your environment.)_
 
 ---
 
