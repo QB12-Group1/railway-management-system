@@ -13,7 +13,11 @@ class Ticket(Model):
     """
 
     def __init__(
-        self, destination_station: str, train_name: str, ticket_price: int
+        self,
+        destination_station: str,
+        train_name: str,
+        ticket_price: int,
+        customer_id: str,
     ) -> None:
         """
         Initialize a new Ticket instance.
@@ -27,3 +31,4 @@ class Ticket(Model):
         self.destination_station = destination_station
         self.train_name = train_name
         self.ticket_price = ticket_price
+        self.customer_id = customer_id
