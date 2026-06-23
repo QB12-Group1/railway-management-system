@@ -1,4 +1,7 @@
-class Railway:
+from app.models.base import Model
+
+
+class Railway(Model):
     """
     Represents a railway line with a name, origin, destination, and intermediate stations.
 
@@ -21,6 +24,7 @@ class Railway:
             destination (str): The ending station.
             stations (list[str]): List of intermediate stations on the route.
         """
+        super().__init__()
         self.name = name
         self.origin = origin
         self.destination = destination

@@ -1,4 +1,7 @@
-class Ticket:
+from app.models.base import Model
+
+
+class Ticket(Model):
     """
     Represents a train ticket with basic travel information.
 
@@ -20,6 +23,7 @@ class Ticket:
             train_name (str): Name or identifier of the train.
             ticket_price (int): Cost of the ticket.
         """
+        super().__init__()
         self.destination_station = destination_station
         self.train_name = train_name
         self.ticket_price = ticket_price
