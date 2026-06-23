@@ -31,7 +31,7 @@ class User:
 
     Args:
         username (str): The user's login username.
-        password (str): The user's password (typically stored as a hash).
+        password (str): The user's password.
         role (UserRole): The role assigned to the user.
     """
 
