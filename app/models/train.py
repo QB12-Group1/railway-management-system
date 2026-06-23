@@ -1,4 +1,7 @@
-class Train:
+from app.models.base import Model
+
+
+class Train(Model):
     """
     Represents a train available for booking in the railway system.
 
@@ -35,6 +38,7 @@ class Train:
         ticket_price: float,
         capacity: int,
     ) -> None:
+        super().__init__()
         self.name = name
         self.railway = railway
         self.average_velocity = average_velocity

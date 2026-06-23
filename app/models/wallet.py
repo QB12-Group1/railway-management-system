@@ -1,4 +1,7 @@
-class Wallet:
+from app.models.base import Model
+
+
+class Wallet(Model):
     """
     Represents a user's wallet containing a balance and an optional linked card.
 
@@ -15,5 +18,6 @@ class Wallet:
             balance (float, optional): Initial wallet balance. Defaults to 0.0.
             linked_card (str | None, optional): Identifier for a linked card. Defaults to None.
         """
+        super().__init__()
         self.balance = balance
         self.linked_card = linked_card  # TODO: Replace str with DebitCard once the DebitCard model is implemented

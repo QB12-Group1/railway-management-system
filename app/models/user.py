@@ -1,7 +1,7 @@
 from enum import StrEnum
 
+from app.models.base import Model
 from app.models.wallet import Wallet
-from app.utils.uuid import generate_id
 
 
 class UserRole(StrEnum):
@@ -22,7 +22,7 @@ class UserRole(StrEnum):
     CUSTOMER = "customer"
 
 
-class User:
+class User(Model):
     """
     Base user model.
 
@@ -36,7 +36,7 @@ class User:
     """
 
     def __init__(self, username: str, password: str, role: UserRole) -> None:
-        self.id = generate_id()
+        super().__init__()
         self.username = username
         self.password = password
         self.role = role
