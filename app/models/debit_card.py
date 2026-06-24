@@ -1,4 +1,7 @@
-class DebitCard:
+from app.models.base import Model
+
+
+class DebitCard(Model):
     """
     Represents a debit card with basic validation for its fields.
 
