@@ -82,7 +82,7 @@ class AuthenticationService(Service):
             or a failure result.
         """
         new_staff = Staff(username, password, full_name, email)
-        return self.register_user(new_staff)
+        return self.register_user(new_staff, email)
 
     def register_customer(
         self, username: str, password: str, full_name: str, email: str
