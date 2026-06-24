@@ -20,21 +20,21 @@ class RailwayRepository(Repository[Railway]):
         self.remove(railway)
         return True
 
-    def modify_by_name(
+    def update_by_name(
         self,
         name: str,
-        length: float | None = None,
-        start_station: str | None = None,
-        end_station: str | None = None,
+        origin: str | None = None,
+        destination: str | None = None,
+        stations: list[str] | None = None,
     ) -> bool:
         railway = self.get_by_name(name)
         if railway is None:
             return False
-        if length is not None:
-            railway.length = length
-        if start_station is not None:
-            railway.start_station = start_station
-        if end_station is not None:
-            railway.end_station = end_station
+        if origin is not None:
+            railway.origin = origin
+        if destination is not None:
+            railway.destination = destination
+        if stations is not None:
+            railway.stations = stations
         return True
     
