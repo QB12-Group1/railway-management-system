@@ -60,8 +60,13 @@ class Staff(User):
     Represents an internal staff member with operational permissions.
     """
 
-    def __init__(self, username: str, password: str) -> None:
+    def __init__(
+        self, username: str, password: str, first_name: str, last_name: str, email: str
+    ) -> None:
         super().__init__(username, password, UserRole.STAFF)
+        self.first_name = first_name
+        self.last_name = last_name
+        self.email = email
 
 
 class Customer(User):

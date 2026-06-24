@@ -65,7 +65,9 @@ class AuthenticationService(Service):
         new_admin = Admin(username, password)
         return self.register_user(new_admin)
 
-    def register_staff(self, username: str, password: str) -> ServiceResult[Staff]:
+    def register_staff(
+        self, username: str, password: str, first_name: str, last_name: str, email: str
+    ) -> ServiceResult[Staff]:
         """
         Register a new staff user.
 
@@ -77,7 +79,7 @@ class AuthenticationService(Service):
             ServiceResult[Staff]: A success result with the Staff instance,
             or a failure result.
         """
-        new_staff = Staff(username, password)
+        new_staff = Staff(username, password, first_name, last_name, email)
         return self.register_user(new_staff)
 
     def register_customer(
