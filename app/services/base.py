@@ -16,7 +16,7 @@ class ServiceResult(Generic[T]):
     data: T | None = None
 
 
-class BaseService:
+class Service:
     """
     Base class for all services to provide consistent response formatting.
     """
