@@ -80,10 +80,9 @@ class UserRepository(Repository[User]):
         if user is None:
             return False
 
-        self.remove(user)
-        return True
+        return self.remove(user)
 
-    def modify_by_username(
+    def update_by_username(
         self,
         username: str,
         password: str | None = None,
@@ -91,7 +90,7 @@ class UserRepository(Repository[User]):
         email: str | None = None,
     ) -> bool:
         """
-        Modify an existing user using their username.
+        Update an existing user using their username.
 
         Only fields that are provided will be updated.
         For Customer-specific fields such as full_name and email,

@@ -54,7 +54,7 @@ class TrainRepository(Repository[Train]):
         self.remove(train)
         return True
 
-    def modify_by_name(
+    def update_by_name(
         self,
         name: str,
         railway: str | None = None,
