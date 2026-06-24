@@ -74,6 +74,8 @@ class AuthenticationService(Service):
         Args:
             username (str): The staff's unique username.
             password (str): The staff's password.
+            full_name (str): The staff's full name.
+            email (str): The staff's email address.
 
         Returns:
             ServiceResult[Staff]: A success result with the Staff instance,
