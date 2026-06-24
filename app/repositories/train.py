@@ -51,8 +51,8 @@ class TrainRepository(Repository[Train]):
 
         if train is None:
             return False
-        self.remove(train)
-        return True
+
+        return self.remove(train)
 
     def update_by_name(
         self,
