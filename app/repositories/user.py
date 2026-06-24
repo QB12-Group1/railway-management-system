@@ -25,6 +25,22 @@ class UserRepository(Repository[User]):
                 return user
         return None
 
+    def get_by_email(self, email: str) -> Customer | None:
+        """
+        Retrieve a customer by their email address.
+
+        Args:
+            email: The email address to search for.
+
+        Returns:
+            The matching customer if found, otherwise None.
+        """
+
+        for user in self.items:
+            if isinstance(user, Customer) and user.email == email:
+                return user
+        return None
+
     def exists_by_username(self, username: str) -> bool:
         """
         Check whether a user with the given username exists.
@@ -36,6 +52,18 @@ class UserRepository(Repository[User]):
             True if a user with the username exists, otherwise False.
         """
         return self.get_by_username(username) is not None
+
+    def exists_by_email(self, email: str) -> bool:
+        """
+        Check whether a customer with the given email exists.
+
+        Args:
+            email: The email address to check.
+
+        Returns:
+            True if a customer with the email exists, otherwise False.
+        """
+        return self.get_by_email(email) is not None
 
     def remove_by_username(self, username: str) -> bool:
         """
@@ -55,7 +83,7 @@ class UserRepository(Repository[User]):
         self.remove(user)
         return True
 
-    def modify_by_usrename(
+    def modify_by_username(
         self,
         username: str,
         password: str | None = None,
