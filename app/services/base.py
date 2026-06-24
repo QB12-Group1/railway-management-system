@@ -22,9 +22,9 @@ class Service:
     """
 
     @staticmethod
-    def success(message: str, data: Any = None) -> ServiceResult:
+    def success(message: str, data: T = None) -> ServiceResult[T]:
         return ServiceResult(success=True, message=message, data=data)
 
     @staticmethod
-    def failure(message: str, data: Any = None) -> ServiceResult:
+    def failure(message: str, data: Any = None) -> ServiceResult[Any]:
         return ServiceResult(success=False, message=message, data=data)
