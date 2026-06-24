@@ -61,11 +61,10 @@ class Staff(User):
     """
 
     def __init__(
-        self, username: str, password: str, first_name: str, last_name: str, email: str
+        self, username: str, password: str, full_name: str, email: str
     ) -> None:
         super().__init__(username, password, UserRole.STAFF)
-        self.first_name = first_name
-        self.last_name = last_name
+        self.full_name = full_name
         self.email = email
 
 
