@@ -52,7 +52,7 @@ class UserRepository(Repository[User]):
         if user is None:
             return False
 
-        self.items.remove(user)
+        self.remove(user)
         return True
 
     def modify_by_usrename(
