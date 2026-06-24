@@ -2,21 +2,42 @@ from app.models.ticket import Ticket
 from app.repositories.base import Repository
 
 
-class TicketRepo(Repository[Ticket]):
-    def get_by_customer_id(self, customer_id: str):
-        res = []
+class TicketRepository(Repository[Ticket]):
+    """
+    Repository for managing tickets in the system.
 
-        for i in self.items:
-            if i.customer_id == customer_id:
-                res.append(i)
+    This repository extends the base Repository with ticket-specific
+    query operations, allowing retrieval based on customers or trains.
+    """
 
-        return res
+    def get_by_customer_id(self, customer_id: str) -> list[Ticket]:
+        """
+        Retrieve all tickets belonging to a specific customer.
 
-    def get_by_train_name(self, train_name: str):
-        res = []
+        Args:
+            customer_id (str): The unique identifier of the customer.
 
-        for i in self.items:
-            if i.train_name == train_name:
-                res.append(i)
+        Returns:
+            list[Ticket]: A list of tickets associated with the customer.
+        """
+        tickets = []
+        for ticket in self.items:
+            if ticket.customer_id == customer_id:
+                tickets.append(ticket)
+        return tickets
 
-        return res
+    def get_by_train_name(self, train_id: str) -> list[Ticket]:
+        """
+        Retrieve all tickets issued for a specific train.
+
+        Args:
+            train_id (str): The unique identifier of the train.
+
+        Returns:
+            list[Ticket]: A list of tickets associated with the train.
+        """
+        tickets = []
+        for ticket in self.items:
+            if ticket.train_id == train_id:
+                tickets.append(ticket)
+        return tickets
