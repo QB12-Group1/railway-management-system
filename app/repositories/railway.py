@@ -1,7 +1,6 @@
 from app.models.railway import Railway
 from app.repositories.base import Repository
 
-'''first'''
 class RailwayRepository(Repository[Railway]):
 
     def get_by_name(self, name: str) -> Railway | None:
