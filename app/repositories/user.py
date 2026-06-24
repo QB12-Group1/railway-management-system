@@ -25,7 +25,7 @@ class UserRepository(Repository[User]):
                 return user
         return None
 
-    def exists_by_usernamr(self, username: str) -> bool:
+    def exists_by_username(self, username: str) -> bool:
         """
         Check whether a user with the given username exists.
 
