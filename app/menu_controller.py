@@ -2,6 +2,8 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from app.context import ServiceContext
+
 """Stack-based menu controller."""
 
 if TYPE_CHECKING:
@@ -11,8 +13,9 @@ if TYPE_CHECKING:
 class MenuController:
     """Controls menu navigation using a stack."""
 
-    def __init__(self) -> None:
+    def __init__(self, services: ServiceContext) -> None:
         self._stack: list[BaseMenu] = []
+        self.services = services
 
     def push(self, menu: BaseMenu) -> None:
         """Push a new menu onto the stack."""
