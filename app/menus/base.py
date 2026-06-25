@@ -21,17 +21,22 @@ class BaseMenu(ABC):
     """Abstract base class for all menus."""
 
     def show_title(self, title: str) -> None:
-        print(f"=== {title} ===")
+        print(f"\n=== {title} ===")
 
     def show_options(self, options: list[str]) -> None:
         for i, option in enumerate(options):
-            print(f"[{i + 1}] {option}\n")
+            print(f"[{i + 1}] {option}")
 
     def get_feedback(self, prompt: str = "Enter an option: ") -> str:
         return input(prompt).strip()
 
     def invalid_input(self) -> None:
         print("Invalid input! try again...")
+
+    def show_not_implemented(self, controller: MenuController) -> None:
+        """Fallback action for unfinished menu items."""
+        print("This feature is not implemented yet.")
+        controller.pop()
 
     def cancel_operation(self, controller: MenuController) -> None:
         """Cancel the current operation and return to the previous menu."""
