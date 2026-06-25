@@ -29,7 +29,7 @@ class StaffService(Service):
 
     def add_railway(
         self, name: str, origin: str, destination: str, stations: list[str]
-    ) -> ServiceResult[Railway] | ServiceResult[None]:
+    ) -> ServiceResult[Railway]:
         """
         Register a new railway route in the system.
 
@@ -40,15 +40,15 @@ class StaffService(Service):
             stations (list[str]): List of stations included in the route.
 
         Returns:
-            ServiceResult[Railway] | ServiceResult[None]: A success result
-            containing the newly created Railway instance, or a failure result.
+            ServiceResult[Railway]: A success result containing the newly
+            created Railway instance, or a failure result.
         """
         if self.railway_repository.exists_by_name(name):
             return self.failure(f"A railway named '{name}' already exists.")
 
         result = self._validate_route(origin, destination, stations)
         if not result.success:
-            return result
+            return self.failure(result.message)
 
         railway = Railway(name, origin, destination, stations)
         self.railway_repository.add(railway)
@@ -84,7 +84,7 @@ class StaffService(Service):
         new_origin: str | None = None,
         new_destination: str | None = None,
         new_stations: list[str] | None = None,
-    ) -> ServiceResult[Railway] | ServiceResult[None]:
+    ) -> ServiceResult[Railway]:
         """
         Update the details of an existing railway.
 
@@ -96,8 +96,8 @@ class StaffService(Service):
             new_stations (list[str] | None): The new list of stations. Defaults to None.
 
         Returns:
-            ServiceResult[Railway] | ServiceResult[None]: The updated Railway
-            object on success, or a failure result.
+            ServiceResult[Railway]: The updated Railway object on success,
+            or a failure result.
         """
         result = self._get_railway_or_failure(name)
         if result.data is None:
@@ -118,7 +118,7 @@ class StaffService(Service):
 
         result = self._validate_route(origin, destination, stations)
         if not result.success:
-            return result
+            return self.failure(result.message)
 
         self.railway_repository.update_by_name(
             name, new_name, origin, destination, stations
@@ -147,7 +147,7 @@ class StaffService(Service):
         quality_index: float,
         ticket_price: float,
         capacity: int,
-    ) -> ServiceResult[Train] | ServiceResult[None]:
+    ) -> ServiceResult[Train]:
         """
         Register a new train in the system.
 
@@ -161,8 +161,8 @@ class StaffService(Service):
             capacity (int): Total seat capacity.
 
         Returns:
-            ServiceResult[Train] | ServiceResult[None]: A success result
-            containing the newly created Train instance, or a failure result.
+            ServiceResult[Train]: A success result containing the newly
+            created Train instance, or a failure result.
         """
         if self.train_repository.exists_by_name(name):
             return self.failure(f"A train named '{name}' already exists.")
@@ -172,19 +172,19 @@ class StaffService(Service):
 
         result = self._validate_positive(average_velocity, "Average velocity")
         if not result.success:
-            return result
+            return self.failure(result.message)
 
         result = self._validate_quality_index(quality_index)
         if not result.success:
-            return result
+            return self.failure(result.message)
 
         result = self._validate_positive(ticket_price, "Ticket price")
         if not result.success:
-            return result
+            return self.failure(result.message)
 
         result = self._validate_positive(capacity, "Capacity")
         if not result.success:
-            return result
+            return self.failure(result.message)
 
         train = Train(
             name,
@@ -225,7 +225,7 @@ class StaffService(Service):
         new_quality_index: float | None = None,
         new_ticket_price: float | None = None,
         new_capacity: int | None = None,
-    ) -> ServiceResult[Train] | ServiceResult[None]:
+    ) -> ServiceResult[Train]:
         """
         Update the attributes of an existing train.
 
@@ -240,8 +240,8 @@ class StaffService(Service):
             new_capacity (int | None): New capacity. Defaults to None.
 
         Returns:
-            ServiceResult[Train] | ServiceResult[None]: The updated Train object
-            on success, or a failure result.
+            ServiceResult[Train]: The updated Train object on success,
+            or a failure result.
         """
         result = self._get_train_or_failure(name)
         if not result.data:
@@ -337,9 +337,7 @@ class StaffService(Service):
             )
         return self.success("The route is valid.")
 
-    def _get_railway_or_failure(
-        self, name: str
-    ) -> ServiceResult[None] | ServiceResult[Railway]:
+    def _get_railway_or_failure(self, name: str) -> ServiceResult[Railway]:
         """
         Retrieve a railway by name or return a failure result.
 
@@ -347,17 +345,14 @@ class StaffService(Service):
             name (str): The name of the railway.
 
         Returns:
-            ServiceResult[None] | ServiceResult[Railway]: The Railway object
-            or failure if not found.
+            ServiceResult[Railway]: The Railway object or failure if not found.
         """
         railway = self.railway_repository.get_by_name(name)
         if railway is None:
             return self.failure(f"No railway found with the name '{name}'.")
         return self.success(f"Railway '{name}' found.", railway)
 
-    def _get_train_or_failure(
-        self, name: str
-    ) -> ServiceResult[None] | ServiceResult[Train]:
+    def _get_train_or_failure(self, name: str) -> ServiceResult[Train]:
         """
         Retrieve a train by name or return a failure result.
 
@@ -365,8 +360,7 @@ class StaffService(Service):
             name (str): The name of the train.
 
         Returns:
-            ServiceResult[None] | ServiceResult[Train]: The Train object
-            or failure if not found.
+            ServiceResult[Train]: The Train object or failure if not found.
         """
         train = self.train_repository.get_by_name(name)
         if train is None:

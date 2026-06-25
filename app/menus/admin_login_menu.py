@@ -1,12 +1,30 @@
-from app.menu_controller import MenuController
+from typing import TYPE_CHECKING
+
 from app.menus.base import BaseMenu
+from app.models.user import UserRole
+
+if TYPE_CHECKING:
+    from app.menu_controller import MenuController
 
 
 class AdminLoginMenu(BaseMenu):
+    """Menu for authenticating administrators."""
+
     def display(self, controller: MenuController) -> None:
-        admin_username, admin_password = "admin", "admin"
-        result = controller.services.auth.register_admin(admin_username, admin_password)
+        """Ask for admin credentials and return to the main menu after success."""
+        self.show_title("Admin Login")
+
+        username = self.get_required_feedback("Username: ")
+        password = self.get_required_feedback("Password: ")
+
+        result = controller.services.auth.log_in(username, password)
         if not result.success:
             print(result.message)
-            self.invalid_input()
             return
+
+        if result.data is None or result.data.role != UserRole.ADMIN:
+            print("Only admins can access this menu.")
+            return
+
+        print(f"Welcome back, {result.data.username}! Admin login successful.")
+        controller.pop()

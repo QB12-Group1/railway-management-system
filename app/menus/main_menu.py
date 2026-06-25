@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from app.menus.admin_login_menu import AdminLoginMenu
 from app.menus.base import BaseMenu
 
 """Example main menu implementation."""
@@ -15,20 +16,25 @@ class MainMenu(BaseMenu):
     """Primary application menu."""
 
     def display(self, controller: MenuController) -> None:
-        self.show_title("Main Menu")
-        self.show_options(
-            ["Enter as 'Admin'", "Enter as 'Staff'", "Enter as 'Customer'", "Exit"]
+        """Render the application entry menu and route to the selected section."""
+        self.handle_options(
+            controller,
+            "Main Menu",
+            {
+                "Enter as 'Admin'": lambda controller: controller.push(
+                    AdminLoginMenu()
+                ),
+                "Enter as 'Staff'": lambda controller: print(
+                    "Staff menu is not implemented yet."
+                ),
+                "Enter as 'Customer'": lambda controller: print(
+                    "Customer menu is not implemented yet."
+                ),
+                "Exit": self.exit,
+            },
         )
-        choice = self.get_feedback()
-        match choice:
-            case "1":
-                pass  # TODO: call admin menu
-            case "2":
-                pass  # TODO: call staff menu
-            case "3":
-                pass  # TODO: call user menu
-            case "4":
-                print("Exiting...")
-                controller.pop()
-            case _:
-                self.invalid_input()
+
+    def exit(self, controller: MenuController) -> None:
+        """Close the main menu and stop the controller loop."""
+        print("Exiting...")
+        controller.pop()

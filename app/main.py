@@ -25,6 +25,7 @@ def main() -> None:
     railway_repository = RailwayRepository()
 
     auth_service = AuthenticationService(user_repository)
+    auth_service.register_admin("admin", "admin")
     customer_service = CustomerService(user_repository)
     wallet_service = WalletService(user_repository)
     staff_service = StaffService(railway_repository, train_repository)
