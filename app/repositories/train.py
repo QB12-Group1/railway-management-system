@@ -72,6 +72,7 @@ class TrainRepository(Repository[Train]):
     def update_by_name(
         self,
         name: str,
+        new_name: str | None = None,
         railway_id: str | None = None,
         average_velocity: float | None = None,
         stop_time: float | None = None,
@@ -102,6 +103,8 @@ class TrainRepository(Repository[Train]):
         if train is None:
             return False
 
+        if new_name is not None:
+            train.name = new_name
         if railway_id is not None:
             train.railway_id = railway_id
         if average_velocity is not None:
