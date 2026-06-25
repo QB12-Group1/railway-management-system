@@ -11,7 +11,7 @@ class Train(Model):
 
     Args:
         name (str): The name or identifier of the train.
-        operating_railway_id (str): The unique identifier of the railway company operating the train.
+        railway_id (str): The unique identifier of the railway operating the train.
         average_velocity (float): The train's average travel speed.
         stop_time (float): The average stop duration at stations.
         quality_index (float): A numerical score representing the quality or comfort level of the train service.
@@ -20,7 +20,7 @@ class Train(Model):
 
     Attributes:
         name (str): The train's name.
-        operating_railway_id (str): The unique identifier for the railway operator.
+        railway_id (str): The unique identifier for the railway operator.
         average_velocity (float): Average travel speed of the train.
         stop_time (float): Average stop duration at stations.
         quality_index (float): Quality rating of the train service.
@@ -31,7 +31,7 @@ class Train(Model):
     def __init__(
         self,
         name: str,
-        operating_railway_id: str,
+        railway_id: str,
         average_velocity: float,
         stop_time: float,
         quality_index: float,
@@ -40,7 +40,7 @@ class Train(Model):
     ) -> None:
         super().__init__()
         self.name = name
-        self.operating_railway_id = operating_railway_id
+        self.railway_id = railway_id
         self.average_velocity = average_velocity
         self.stop_time = stop_time
         self.quality_index = quality_index
