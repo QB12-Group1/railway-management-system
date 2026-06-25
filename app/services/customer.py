@@ -47,14 +47,14 @@ class CustomerService(Service):
         user = self.user_repository.get_by_username(username)
 
         if user is None:
-            return self.failure(f"User {username} not found.")
+            return self.failure(f"User '{username}' not found.")
 
         if not isinstance(user, Customer):
-            return self.failure(f"User {username} is not a customer member.")
+            return self.failure(f"User '{username}' is not a customer member.")
 
         if new_email is not None and new_email != user.email:
             if self.user_repository.exists_by_email(new_email):
-                return self.failure(f"Email {new_email} is already taken.")
+                return self.failure(f"Email '{new_email}' is already taken.")
 
         self.user_repository.update_by_username(
             username, full_name=new_full_name, email=new_email
@@ -78,10 +78,10 @@ class CustomerService(Service):
         user = self.user_repository.get_by_username(username)
 
         if user is None:
-            return self.failure(f"User {username} not found.")
+            return self.failure(f"User '{username}' not found.")
 
         if not isinstance(user, Customer):
-            return self.failure(f"User {username} is not a customer member.")
+            return self.failure(f"User '{username}' is not a customer member.")
 
         self.user_repository.update_by_username(username, password=new_password)
         return self.success("Password updated successfully.", user)
