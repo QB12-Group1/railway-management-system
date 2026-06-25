@@ -58,6 +58,7 @@ class RailwayRepository(Repository[Railway]):
     def update_by_name(
         self,
         name: str,
+        new_name: str | None = None,
         origin: str | None = None,
         destination: str | None = None,
         stations: list[str] | None = None,
@@ -81,6 +82,8 @@ class RailwayRepository(Repository[Railway]):
         if railway is None:
             return False
 
+        if new_name is not None:
+            railway.name = new_name
         if origin is not None:
             railway.origin = origin
         if destination is not None:
