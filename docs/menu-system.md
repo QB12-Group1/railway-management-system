@@ -72,6 +72,40 @@ print("Staff member added successfully.")
 self.pause()
 ```
 
+## `not_implemented_yet`
+
+Use `not_implemented_yet()` as a temporary placeholder for menu options that are
+planned but not implemented yet.
+
+Example:
+
+```python
+class AdminMenu(BaseMenu):
+    def display(self, controller: MenuController) -> None:
+        self.handle_options(
+            controller,
+            "Admin Menu",
+            {
+                "Add staff": self.add_staff,
+                "Remove staff": self.remove_staff,
+                "list staff": self.not_implemented_yet, # TODO: implement viewing staffs functionallity(menu)
+                "Back": lambda controller: controller.pop(),
+            },
+        )
+```
+
+When selected, this helper prints a message to inform the user that the feature
+is not available yet, then returns one menu level back.
+
+This is useful when:
+
+- a menu option should appear now, but its logic will be added later
+- you want unfinished features to fail in a consistent way
+- you want to avoid writing duplicate placeholder code in multiple menus
+
+If the option should remain on the same menu instead of returning back, implement
+a custom placeholder action instead.
+
 ## Adding New Menus
 
 For simple menus, create a new class that extends `BaseMenu` and call
