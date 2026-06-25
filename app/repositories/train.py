@@ -10,6 +10,21 @@ class TrainRepository(Repository[Train]):
     operations. Trains are primarily identified by their unique name.
     """
 
+    def get_all_by_railway_id(self, railway_id: str) -> list[Train]:
+        """
+        Retrieve all trains operating on a specific railway.
+
+        This lookup is essential for managing cascading updates, such as
+        reassigning or clearing train records when a railway is deleted.
+
+        Args:
+            railway_id (str): The unique identifier of the railway.
+
+        Returns:
+            list[Train]: A list of trains associated with the given railway.
+        """
+        return [train for train in self.items if train.railway_id == railway_id]
+
     def get_by_name(self, name: str) -> Train | None:
         """
         Retrieve a train by its unique name.
@@ -57,7 +72,8 @@ class TrainRepository(Repository[Train]):
     def update_by_name(
         self,
         name: str,
-        railway: str | None = None,
+        new_name: str | None = None,
+        railway_id: str | None = None,
         average_velocity: float | None = None,
         stop_time: float | None = None,
         quality_index: float | None = None,
@@ -71,7 +87,8 @@ class TrainRepository(Repository[Train]):
 
         Args:
             name (str): The name of the train to update.
-            railway (str | None): New railway name, if provided. Defaults to None.
+            operating_railway_id (str | None): New unique identifier for the railway operator.
+                Defaults to None.
             average_velocity (float | None): New average velocity, if provided. Defaults to None.
             stop_time (float | None): New stop time, if provided. Defaults to None.
             quality_index (float | None): New quality index, if provided. Defaults to None.
@@ -86,8 +103,10 @@ class TrainRepository(Repository[Train]):
         if train is None:
             return False
 
-        if railway is not None:
-            train.railway = railway
+        if new_name is not None:
+            train.name = new_name
+        if railway_id is not None:
+            train.railway_id = railway_id
         if average_velocity is not None:
             train.average_velocity = average_velocity
         if stop_time is not None:
