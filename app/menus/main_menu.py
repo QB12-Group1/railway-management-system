@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING
 
 from app.menus.admin_login_menu import AdminLoginMenu
 from app.menus.base import BaseMenu
+from app.menus.customer_login_menu import CustomerLoginMenu
+from app.menus.staff_login_menu import StaffLoginMenu
 
 """Example main menu implementation."""
 
@@ -24,11 +26,11 @@ class MainMenu(BaseMenu):
                 "Enter as 'Admin'": lambda controller: controller.push(
                     AdminLoginMenu()
                 ),
-                "Enter as 'Staff'": lambda controller: print(
-                    "Staff menu is not implemented yet."
+                "Enter as 'Staff'": lambda controller: controller.push(
+                    StaffLoginMenu()
                 ),
-                "Enter as 'Customer'": lambda controller: print(
-                    "Customer menu is not implemented yet."
+                "Enter as 'Customer'": lambda controller: controller.push(
+                    CustomerLoginMenu()
                 ),
                 "Exit": self.exit,
             },

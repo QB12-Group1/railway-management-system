@@ -1,11 +1,15 @@
 # Menu System Changes
 
-This document explains the admin login flow and the reusable menu helpers added
+This document explains the login menu flow and the reusable menu helpers added
 to reduce repeated menu code.
 
-## Admin Login
+## Login Menus
 
-The main menu now routes the admin option to `AdminLoginMenu`.
+The main menu routes each role option to its own login menu:
+
+- `Enter as 'Admin'` opens `AdminLoginMenu`.
+- `Enter as 'Staff'` opens `StaffLoginMenu`.
+- `Enter as 'Customer'` opens `CustomerLoginMenu`.
 
 Default credentials are created when the app starts:
 
@@ -17,13 +21,13 @@ password: admin
 To use it:
 
 1. Run the app.
-2. Choose `Enter as 'Admin'` from the main menu.
-3. Enter the default admin username and password.
+2. Choose a role from the main menu.
+3. Enter credentials for a user with that role.
 4. After a successful login, the app prints a welcome message and returns to the
    main menu.
 
 The login flow uses `AuthenticationService.log_in()` and checks that the logged
-in user has the `ADMIN` role before allowing the login to succeed.
+in user has the matching role before allowing the login to succeed.
 
 ## Reusable Menu Helpers
 
