@@ -8,9 +8,10 @@ class Ticket(Model):
     Attributes:
         destination_station (str): The name of the station where the passenger is traveling to.
         train_id (str): The unique identifier of the train associated with the ticket.
-        ticket_price (int): The price of the ticket, typically in the smallest currency unit
+        ticket_price (float): The price of the ticket, typically in the smallest currency unit
             or the standard currency used by the system.
         customer_id (str): The unique identifier of the user who purchased the ticket.
+        purchase_time (str): The timestamp of when the ticket was issued.
     """
 
     def __init__(
@@ -19,7 +20,7 @@ class Ticket(Model):
         train_id: str,
         ticket_price: float,
         customer_id: str,
-        time: str,
+        purchase_time: str,
     ) -> None:
         """
         Initialize a new Ticket instance.
@@ -36,4 +37,4 @@ class Ticket(Model):
         self.train_id = train_id
         self.ticket_price = ticket_price
         self.customer_id = customer_id
-        self.time = time
+        self.purchase_time = purchase_time
