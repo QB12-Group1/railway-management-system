@@ -17,7 +17,8 @@ class Train(Model):
         stop_time (float): The average stop duration at stations.
         quality_index (float): A numerical score representing the quality or comfort level of the train service.
         ticket_price (float): Price of a single ticket for this train.
-        capacity (int): The total number of available seats on the train.
+        capacity (int): The current number of available seats on the train.
+        max_capacity (int): The original total capacity of the train.
 
     Attributes:
         name (str): The train's name.
@@ -27,7 +28,7 @@ class Train(Model):
         stop_time (float): Average stop duration at stations.
         quality_index (float): Quality rating of the train service.
         ticket_price (float): Cost of a ticket for this train.
-        capacity (int): Remaining number of available seats.
+        capacity (int): The initial total number of seats available.
     """
 
     def __init__(
@@ -48,6 +49,7 @@ class Train(Model):
         self.quality_index = quality_index
         self.ticket_price = ticket_price
         self.capacity = capacity
+        self.max_capacity = capacity
 
     def book(self) -> None:
         """
