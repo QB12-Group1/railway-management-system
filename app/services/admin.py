@@ -75,10 +75,10 @@ class AdminService(Service):
         user = self.user_repository.get_by_username(username)
 
         if user is None:
-            return self.failure(f"User {username} not found.")
+            return self.failure(f"User '{username}' not found.")
 
         if not isinstance(user, Staff):
-            return self.failure(f"User {username} is not a staff member.")
+            return self.failure(f"User '{username}' is not a staff member.")
 
         self.user_repository.remove(user)
         return self.success("Staff member removed successfully.")
