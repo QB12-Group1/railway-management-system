@@ -34,4 +34,5 @@ class AdminLoginMenu(BaseMenu):
             return
 
         print(f"Welcome back, {result.data.username}! Admin login successful.")
+        self.show_not_implemented(controller)  # TODO: implement admin dashboard menu
         controller.pop()
