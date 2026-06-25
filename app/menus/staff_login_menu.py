@@ -15,7 +15,14 @@ class StaffLoginMenu(BaseMenu):
         self.show_title("Staff Login")
 
         username = self.get_required_feedback("Username: ")
+        if username is None:
+            self.cancel_operation(controller)
+            return
+
         password = self.get_required_feedback("Password: ")
+        if password is None:
+            self.cancel_operation(controller)
+            return
 
         result = controller.services.auth.log_in(username, password)
         if not result.success:

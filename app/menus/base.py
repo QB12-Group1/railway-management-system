@@ -13,6 +13,9 @@ if TYPE_CHECKING:
 MenuAction = Callable[["MenuController"], None]
 """Callable type used by menu options to receive and update the controller."""
 
+CANCEL_COMMAND = "exit"
+"""Input command used to cancel the current menu operation."""
+
 
 class BaseMenu(ABC):
     """Abstract base class for all menus."""
@@ -30,14 +33,25 @@ class BaseMenu(ABC):
     def invalid_input(self) -> None:
         print("Invalid input! try again...")
 
+    def cancel_operation(self, controller: MenuController) -> None:
+        """Cancel the current operation and return to the previous menu."""
+        print("Operation cancelled.")
+        controller.pop()
+
+    def is_cancel_command(self, value: str) -> bool:
+        """Return True when the user input requests cancelling the operation."""
+        return value.lower() == CANCEL_COMMAND
+
     def pause(self, prompt: str = "Press Enter to continue...") -> None:
         """Wait for the user before continuing to the next menu render."""
         input(prompt)
 
-    def get_required_feedback(self, prompt: str) -> str:
-        """Prompt until the user enters a non-empty value."""
+    def get_required_feedback(self, prompt: str) -> str | None:
+        """Prompt until the user enters a value or the cancel command."""
         while True:
             value = self.get_feedback(prompt)
+            if self.is_cancel_command(value):
+                return None
             if value:
                 return value
             self.invalid_input()
@@ -53,6 +67,10 @@ class BaseMenu(ABC):
         self.show_options(list(options))
 
         choice = self.get_feedback()
+        if self.is_cancel_command(choice):
+            self.cancel_operation(controller)
+            return
+
         try:
             action = list(options.values())[int(choice) - 1]
         except (ValueError, IndexError):

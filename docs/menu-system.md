@@ -2,6 +2,14 @@
 
 The shared menu helpers live in `app/menus/base.py`.
 
+## Cancelling Operations
+
+Type `exit` during a menu prompt to cancel the current operation and return one
+menu level back.
+
+For example, if the app is asking for a login username or password, entering
+`exit` cancels login and returns to the main menu.
+
 ### `handle_options`
 
 Use `handle_options()` when a menu only needs to show a numbered list and call
@@ -32,17 +40,26 @@ This avoids repeating the same pattern in every menu:
 
 ### `get_required_feedback`
 
-Use `get_required_feedback()` when a field cannot be empty.
+Use `get_required_feedback()` when a field cannot be empty and should support
+the shared cancel command.
 
 Example:
 
 ```python
 username = self.get_required_feedback("Username: ")
+if username is None:
+    self.cancel_operation(controller)
+    return
+
 password = self.get_required_feedback("Password: ")
+if password is None:
+    self.cancel_operation(controller)
+    return
 ```
 
 If the user submits an empty value, the helper prints the invalid input message
-and asks again.
+and asks again. If the user enters `exit`, the helper returns `None` so the menu
+can cancel the operation.
 
 ### `pause`
 
@@ -74,6 +91,10 @@ class AdminMenu(BaseMenu):
 
     def add_staff(self, controller: MenuController) -> None:
         username = self.get_required_feedback("Username: ")
+        if username is None:
+            self.cancel_operation(controller)
+            return
+
         print(f"Adding staff user {username}.")
 ```
 
