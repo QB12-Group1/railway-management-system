@@ -48,6 +48,7 @@ class Train(Model):
         self.quality_index = quality_index
         self.ticket_price = ticket_price
         self.capacity = capacity
+        self.max_capacity = capacity
 
     def book(self) -> None:
         """

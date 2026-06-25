@@ -17,8 +17,9 @@ class Ticket(Model):
         self,
         destination_station: str,
         train_id: str,
-        ticket_price: int,
+        ticket_price: float,
         customer_id: str,
+        time: str,
     ) -> None:
         """
         Initialize a new Ticket instance.
@@ -26,11 +27,13 @@ class Ticket(Model):
         Args:
             destination_station (str): Destination station for the trip.
             train_id (str): Unique identifier of the train.
-            ticket_price (int): Cost of the ticket.
+            ticket_price (float): Cost of the ticket.
             customer_id (str): The unique identifier of the user who purchased the ticket.
+            time (str):set time
         """
         super().__init__()
         self.destination_station = destination_station
         self.train_id = train_id
         self.ticket_price = ticket_price
         self.customer_id = customer_id
+        self.time = time
