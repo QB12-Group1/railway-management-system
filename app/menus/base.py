@@ -38,10 +38,13 @@ class BaseMenu(ABC):
         print("This feature is not implemented yet.")
         controller.pop()
 
-    def cancel_operation(self, controller: MenuController) -> None:
-        """Cancel the current operation and return to the previous menu."""
+    def cancel_operation(
+        self, controller: MenuController, exit_menu: bool = False
+    ) -> None:
+        """Cancel the current operation and optionally pop the current menu."""
         print("Operation cancelled.")
-        controller.pop()
+        if exit_menu:
+            controller.pop()
 
     def is_cancel_command(self, value: str) -> bool:
         """Return True when the user input requests cancelling the operation."""
@@ -73,7 +76,7 @@ class BaseMenu(ABC):
 
         choice = self.get_feedback()
         if self.is_cancel_command(choice):
-            self.cancel_operation(controller)
+            self.cancel_operation(controller, exit_menu=True)
             return
 
         try:
