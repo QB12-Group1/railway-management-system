@@ -87,8 +87,7 @@ class TicketService(Service):
             return self.failure("The railway assigned to this train no longer exists.")
 
         # Check if the station exists on this route
-        stations = [railway.origin] + railway.stations + [railway.destination]
-        if destination_station not in stations:
+        if destination_station not in railway.all_stations:
             return self.failure(
                 f"Station '{destination_station}' is not on the '{railway.name}' route."
             )

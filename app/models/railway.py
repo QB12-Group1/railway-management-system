@@ -29,3 +29,14 @@ class Railway(Model):
         self.origin = origin
         self.destination = destination
         self.stations = stations
+
+    @property
+    def all_stations(self) -> list[str]:
+        return [self.origin] + self.stations + [self.destination]
+
+    @property
+    def route(self) -> str:
+        return " -> ".join(self.all_stations)
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}[{self.name}]: {self.route}"

@@ -12,7 +12,7 @@ class RailwayManagementMenu(BaseMenu):
     def display(self, controller: MenuController) -> None:
         self.handle_options(
             controller,
-            "Railway Managemen",
+            "Manage Railways",
             {
                 "Add railway": self.add_railway,
                 "Remove railway": self.remove_railway,
@@ -23,25 +23,25 @@ class RailwayManagementMenu(BaseMenu):
         )
 
     def add_railway(self, controller: MenuController) -> None:
-        self.show_title("Add Railway")
+        self.show_title("Register")
 
-        name = self.get_required_feedback("Railway name:")
+        name = self.get_required_feedback("Railway name: ")
 
         if name is None:
             self.cancel_operation(controller)
             return
 
-        origin = self.get_required_feedback("Origin station:")
+        origin = self.get_required_feedback("Origin station: ")
         if origin is None:
             self.cancel_operation(controller)
             return
 
-        destination = self.get_required_feedback("Distination station:")
+        destination = self.get_required_feedback("Distination station: ")
         if destination is None:
             self.cancel_operation(controller)
             return
 
-        stations_input = self.get_required_feedback("Stations :")
+        stations_input = self.get_required_feedback("Stations: ")
         if stations_input is None:
             self.cancel_operation(controller)
             return
@@ -55,9 +55,9 @@ class RailwayManagementMenu(BaseMenu):
         self.pause()
 
     def remove_railway(self, controller: MenuController) -> None:
-        self.show_title("Remove Railway")
+        self.show_title("Remove")
 
-        name = self.get_required_feedback("Railway name:")
+        name = self.get_required_feedback("Railway name: ")
 
         if name is None:
             self.cancel_operation(controller)
@@ -68,7 +68,7 @@ class RailwayManagementMenu(BaseMenu):
         self.pause()
 
     def modify_railway(self, controller: MenuController) -> None:
-        self.show_title("Modify Railway")
+        self.show_title("Update")
 
         name = self.get_required_feedback("Railway name:")
 
@@ -77,27 +77,22 @@ class RailwayManagementMenu(BaseMenu):
             return
 
         print("Leave blank to Keep current value.")
-        new_name = self.get_feedback("New name:") or None
-        new_origin = self.get_feedback("New origin:") or None
-        new_destination = self.get_feedback("New destination:") or None
-
-        new_stations = self.get_feedback("New stations:")
-        statinos = (
+        new_name = self.get_feedback("New name: ") or None
+        new_origin = self.get_feedback("New origin: ") or None
+        new_destination = self.get_feedback("New destination: ") or None
+        new_stations = self.get_feedback("New stations: ")
+        stations = (
             [s.strip() for s in new_stations.split(",")] if new_stations else None
         )
 
         result = controller.services.staff.update_railway(
-            name,
-            new_name=new_name,
-            new_origin=new_origin,
-            new_destination=new_destination,
-            new_stations=statinos,
+            name, new_name, new_origin, new_destination, stations
         )
         print(result.message)
         self.pause()
 
     def list_railway(self, controller: MenuController) -> None:
-        self.show_title("All Railway")
+        self.show_title("Railway List")
 
         result = controller.services.staff.get_all_railways()
 
@@ -107,9 +102,6 @@ class RailwayManagementMenu(BaseMenu):
             return
 
         for railway in result.data:
-            print(f"name : {railway.name}")
-            print(f"origin : {railway.origin}")
-            print(f"destination : {railway.destination}")
-            print(f"stations : {','.join(railway.stations)}")
+            print(railway)
 
         self.pause()
