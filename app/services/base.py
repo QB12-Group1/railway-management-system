@@ -1,19 +1,32 @@
 from dataclasses import dataclass
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, Literal, TypeVar, overload
 
 T = TypeVar("T")
 
 
 @dataclass
-class ServiceResult(Generic[T]):
+class Success(Generic[T]):
     """
-    A standardized container for service responses.
-    Mimics Go-style error handling: (result, error)
+    A standardized container for successful service responses.
     """
 
-    success: bool
+    success: Literal[True]
     message: str
-    data: T | None = None
+    data: T
+
+
+@dataclass
+class Failure:
+    """
+    A standardized container for failed service responses.
+    """
+
+    success: Literal[False]
+    message: str
+    data: Any = None
+
+
+ServiceResult = Success[T] | Failure
 
 
 class Service:
@@ -22,9 +35,17 @@ class Service:
     """
 
     @staticmethod
-    def success(message: str, data: T = None) -> ServiceResult[T]:
-        return ServiceResult(success=True, message=message, data=data)
+    @overload
+    def success(message: str) -> Success[None]: ...
 
     @staticmethod
-    def failure(message: str, data: Any = None) -> ServiceResult[Any]:
-        return ServiceResult(success=False, message=message, data=data)
+    @overload
+    def success(message: str, data: T) -> Success[T]: ...
+
+    @staticmethod
+    def success(message: str, data: Any = None) -> Success[Any]:
+        return Success(success=True, message=message, data=data)
+
+    @staticmethod
+    def failure(message: str, data: Any = None) -> Failure:
+        return Failure(success=False, message=message, data=data)
