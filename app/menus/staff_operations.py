@@ -12,7 +12,7 @@ class StaffDashboard(BaseMenu):
     def display(self, controller: MenuController) -> None:
         self.handle_options(
             controller,
-            "Staff Operations Dashboard",
+            "Staff Dashboard",
             {
                 "Manage Railways": lambda controller: controller.push(
                     RailwayManagementMenu()

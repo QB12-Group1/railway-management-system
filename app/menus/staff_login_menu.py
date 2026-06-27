@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from app.menus.base import BaseMenu
+from app.menus.staff_operations import StaffDashboard
 from app.models.user import UserRole
 
 if TYPE_CHECKING:
@@ -35,3 +36,4 @@ class StaffLoginMenu(BaseMenu):
 
         print(f"Welcome back, {result.data.username}! Staff login successful.")
         controller.pop()
+        controller.push(StaffDashboard())
