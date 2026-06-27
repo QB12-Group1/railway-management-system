@@ -1,48 +1,80 @@
-from app.menu_controller import MenuController
+from typing import TYPE_CHECKING
+
 from app.menus.base import BaseMenu
-from app.menus.main_menu import MainMenu
-from app.repositories.user import User
-from app.services.admin import AdminService
+
+if TYPE_CHECKING:
+    from app.menu_controller import MenuController
 
 
 class ManageStaff(BaseMenu):
-    def show_admin_manage(
-        self,
-        user: User,
-        admin: AdminService,
-        menu: MainMenu,
-        controler: MenuController,
-        username,
-        password,
-        full_name,
-        email,
-    ):
-        username = user.username
-        password = user.password
+    """Manage Staff Menu"""
 
-        if user.role == "admin":
-            while True:
-                print("===== Manage Staff =====")
-                print("1. Add Staff")
-                print("2. Remove Staff")
-                print("3. View Staff Members")
-                print("4. Exit")
+    def display(self, controller: MenuController) -> None:
+        self.handle_options(
+            controller,
+            "Manage Staff",
+            {
+                "Add Staff": self.add_staff,
+                "Remove Staff": self.remove_staff,
+                "List Staff": self.list_staff,
+                "Exit": lambda controller: controller.pop(),
+            },
+        )
 
-                choice = input("Select an option: ")
+    def add_staff(self, controller: MenuController) -> None:
+        self.show_title("Add Staff")
 
-                if choice == "1":
-                    admin.add_staff(username, password, full_name, email)
-                elif choice == "2":
-                    admin.remove_staff(username)
+        username = self.get_required_feedback("Staff username: ")
 
-                elif choice == "3":
-                    admin.get_all_staff()
+        if username is None:
+            self.cancel_operation(controller)
+            return
 
-                elif choice == "4":
-                    print("Returning to Main Menu...")
-                    break
+        password = self.get_required_feedback("Staff Password: ")
+        if password is None:
+            self.cancel_operation(controller)
+            return
 
-                else:
-                    print("Invalid option.")
+        full_name = self.get_required_feedback("Full Name Staff: ")
+        if full_name is None:
+            self.cancel_operation(controller)
+            return
 
-        menu.display(controler)
+        email = self.get_required_feedback("Email: ")
+        if email is None:
+            self.cancel_operation(controller)
+            return
+
+        action = controller.services.admin.add_staff(
+            username, password, full_name, email
+        )
+        print(action.message)
+        self.pause()
+
+    def remove_staff(self, controller: MenuController) -> None:
+        self.show_title("Remove Staff")
+
+        username = self.get_required_feedback(" Username: ")
+
+        if username is None:
+            self.cancel_operation(controller)
+            return
+
+        action = controller.services.admin.remove_staff(username)
+        print(action.message)
+        self.pause()
+
+    def list_staff(self, controller: MenuController) -> None:
+        self.show_title("Staff List")
+
+        action = controller.services.admin.get_all_staff()
+
+        if not action.data:
+            print("No Staff found.")
+            self.pause()
+            return
+
+        for staff in action.data:
+            print(staff)
+
+        self.pause()
