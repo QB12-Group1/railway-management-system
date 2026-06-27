@@ -178,7 +178,7 @@ class TicketService(Service):
                 f"An unexpected error occurred during ticket export: {str(e)}"
             )
 
-    def get_all_trains(self) -> ServiceResult[list[tuple[Railway, Train]]]:
+    def get_available_trains(self) -> ServiceResult[list[tuple[Railway, Train]]]:
         """
         Retrieves a list of available trains paired with their railway.
 
