@@ -54,6 +54,7 @@ class RailwayManagementMenu(BaseMenu):
         print(result.message)
         self.pause()
 
+    # TODO: ask if the user is sure about this operation also print a message saying with this change these trains aren't operatable unless you modify them to operate on other lanes
     def remove_railway(self, controller: MenuController) -> None:
         self.show_title("Remove")
 
@@ -70,7 +71,7 @@ class RailwayManagementMenu(BaseMenu):
     def modify_railway(self, controller: MenuController) -> None:
         self.show_title("Update")
 
-        name = self.get_required_feedback("Railway name:")
+        name = self.get_required_feedback("Railway name: ")
 
         if name is None:
             self.cancel_operation(controller)
@@ -78,12 +79,27 @@ class RailwayManagementMenu(BaseMenu):
 
         print("Leave blank to Keep current value.")
         new_name = self.get_feedback("New name: ") or None
+        if new_name is not None and self.is_cancel_command(new_name):
+            self.cancel_operation(controller)
+            return
+
         new_origin = self.get_feedback("New origin: ") or None
+        if new_origin is not None and self.is_cancel_command(new_origin):
+            self.cancel_operation(controller)
+            return
+
         new_destination = self.get_feedback("New destination: ") or None
+        if new_destination is not None and self.is_cancel_command(new_destination):
+            self.cancel_operation(controller)
+            return
+
         new_stations = self.get_feedback("New stations: ")
         stations = (
             [s.strip() for s in new_stations.split(",")] if new_stations else None
         )
+        if stations and self.is_cancel_command(stations[0]):
+            self.cancel_operation(controller)
+            return
 
         result = controller.services.staff.update_railway(
             name, new_name, new_origin, new_destination, stations
@@ -96,6 +112,7 @@ class RailwayManagementMenu(BaseMenu):
 
         result = controller.services.staff.get_all_railways()
 
+        # TODO: pretty print this section
         if not result.data:
             print("No railway found.")
             self.pause()

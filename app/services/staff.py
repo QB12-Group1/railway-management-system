@@ -128,6 +128,22 @@ class StaffService(Service):
             railway,
         )
 
+    def get_railway(self, railway_id: str) -> ServiceResult[Railway]:
+        """
+        Retrieve the name of a railway by its ID.
+
+        Args:
+            railway_id: The unique identifier of the railway.
+
+        Returns:
+            ServiceResult[str]: A success result containing the railway name,
+            or a failure result if no railway with the given ID exists.
+        """
+        railway = self.railway_repository.get_by_id(railway_id)
+        if railway is None:
+            return self.failure(f"No railway found with ID '{railway_id}'.")
+        return self.success("Railway retrieved successfully.", railway)
+
     def get_all_railways(self) -> ServiceResult[list[Railway]]:
         """
         Retrieve all registered railways.
@@ -141,7 +157,7 @@ class StaffService(Service):
     def add_train(
         self,
         name: str,
-        railway_id: str,
+        railway_name: str,
         average_velocity: float,
         stop_time: float,
         quality_index: float,
@@ -153,7 +169,7 @@ class StaffService(Service):
 
         Args:
             name (str): Unique name of the train.
-            railway_id (str): ID of the railway it operates on.
+            railway_name (str): Name of the railway it operates on.
             average_velocity (float): Average speed of the train.
             stop_time (float): Total stop time at stations.
             quality_index (float): Quality rating (0-10).
@@ -167,8 +183,10 @@ class StaffService(Service):
         if self.train_repository.exists_by_name(name):
             return self.failure(f"A train named '{name}' already exists.")
 
-        if not self.railway_repository.exists_by_id(railway_id):
-            return self.failure(f"No railway found with the ID '{railway_id}'.")
+        result = self._get_railway_or_failure(railway_name)
+        if not result.success:
+            return self.failure(result.message)
+        railway = result.data
 
         result = self._validate_positive(average_velocity, "Average velocity")
         if not result.success:
@@ -188,7 +206,7 @@ class StaffService(Service):
 
         train = Train(
             name,
-            railway_id,
+            railway.id,
             average_velocity,
             stop_time,
             quality_index,
@@ -219,7 +237,7 @@ class StaffService(Service):
         self,
         name,
         new_name: str | None = None,
-        new_railway_id: str | None = None,
+        new_railway_name: str | None = None,
         new_average_velocity: float | None = None,
         new_stop_time: float | None = None,
         new_quality_index: float | None = None,
@@ -232,7 +250,7 @@ class StaffService(Service):
         Args:
             name (str): The current name of the train.
             new_name (str | None): The new name, if renaming. Defaults to None.
-            new_railway_id (str | None): New railway ID. Defaults to None.
+            new_railway_name (str | None): New railway name. Defaults to None.
             new_average_velocity (float | None): New average velocity. Defaults to None.
             new_stop_time (float | None): New stop time. Defaults to None.
             new_quality_index (float | None): New quality index. Defaults to None.
@@ -254,14 +272,17 @@ class StaffService(Service):
                 )
 
         train = result.data
-        if new_railway_id and new_railway_id != train.railway_id:
-            if not self.railway_repository.exists_by_id(new_railway_id):
-                return self.failure(f"No railway found with the ID '{new_railway_id}'.")
+        if new_railway_name:
+            result = self._get_railway_or_failure(new_railway_name)
+            if not result.success:
+                return self.failure(
+                    f"No railway found with the name '{new_railway_name}'."
+                )
 
         self.train_repository.update_by_name(
             name,
             new_name,
-            new_railway_id,
+            result.data.id if result.data.id != train.railway_id else None,
             new_average_velocity,
             new_stop_time,
             new_quality_index,
