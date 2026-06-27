@@ -84,7 +84,7 @@ class AdminService(Service):
             return self.failure(f"User '{username}' is not a staff member.")
 
         self.user_repository.remove(user)
-        return self.success(f"Train '{user.username}' has been removed successfully.")
+        return self.success(f"Staff '{user.username}' has been removed successfully.")
 
     def get_all_staff(self) -> ServiceResult[list[Staff]]:
         """
@@ -96,4 +96,4 @@ class AdminService(Service):
         """
         users = self.user_repository.get_all()
         staffs = [user for user in users if isinstance(user, Staff)]
-        return self.success("All trains have been retrieved.", staffs)
+        return self.success("All staffs have been retrieved.", staffs)
