@@ -1,5 +1,6 @@
 import time
 
+from app.models.railway import Railway
 from app.models.ticket import Ticket
 from app.models.train import Train
 from app.models.user import Customer
@@ -177,19 +178,32 @@ class TicketService(Service):
                 f"An unexpected error occurred during ticket export: {str(e)}"
             )
 
-    def get_all_trains(self) -> ServiceResult[list[Train]]:
+    def get_available_trains(self) -> ServiceResult[list[tuple[Railway, Train]]]:
         """
-        Retrieves a list of all trains that currently have available capacity.
+        Retrieves a list of available trains paired with their railway.
+
+        Only trains with available capacity and an assigned railway are included.
 
         Returns:
-            A ServiceResult containing a list of Train objects with available seats,
-            or a failure message if no trains with capacity are found.
+            A ServiceResult containing a list of (Railway, Train) tuples,
+            or a failure message if no available trains are found.
         """
+
         all_trains = self.train_repository.get_all()
-        available_trains = [train for train in all_trains if train.capacity > 0]
+        available_trains = []
+        for train in all_trains:
+            if train.capacity <= 0:
+                continue
+            if train.railway_id is None:
+                continue
+            railway = self.railway_repository.get_by_id(train.railway_id)
+            if railway is None:
+                continue
+
+            available_trains.append((railway, train))
 
         if not available_trains:
-            return self.failure("No trains with available capacity were found.")
+            return self.failure("No trains found.")
 
         return self.success(
             f"Found {len(available_trains)} available train(s).", available_trains
