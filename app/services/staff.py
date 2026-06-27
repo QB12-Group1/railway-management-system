@@ -266,7 +266,7 @@ class StaffService(Service):
             return result
 
         if new_name and new_name != name:
-            if not self.train_repository.exists_by_name(new_name):
+            if self.train_repository.exists_by_name(new_name):
                 return self.failure(
                     f"Cannot rename to '{new_name}' because that name is already in use."
                 )
