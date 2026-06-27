@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 MenuAction = Callable[["MenuController"], None]
 """Callable type used by menu options to receive and update the controller."""
 
-CANCEL_COMMAND = "exit"
+CANCEL_COMMAND = ["exit", "cancel"]
 """Input command used to cancel the current menu operation."""
 
 
@@ -38,14 +38,17 @@ class BaseMenu(ABC):
         print("This feature is not implemented yet.")
         controller.pop()
 
-    def cancel_operation(self, controller: MenuController) -> None:
-        """Cancel the current operation and return to the previous menu."""
+    def cancel_operation(
+        self, controller: MenuController, exit_menu: bool = False
+    ) -> None:
+        """Cancel the current operation and optionally pop the current menu."""
         print("Operation cancelled.")
-        controller.pop()
+        if exit_menu:
+            controller.pop()
 
     def is_cancel_command(self, value: str) -> bool:
         """Return True when the user input requests cancelling the operation."""
-        return value.lower() == CANCEL_COMMAND
+        return value.lower() in CANCEL_COMMAND
 
     def pause(self, prompt: str = "Press Enter to continue...") -> None:
         """Wait for the user before continuing to the next menu render."""
@@ -73,12 +76,16 @@ class BaseMenu(ABC):
 
         choice = self.get_feedback()
         if self.is_cancel_command(choice):
-            self.cancel_operation(controller)
+            self.cancel_operation(controller, exit_menu=True)
             return
 
         try:
-            action = list(options.values())[int(choice) - 1]
-        except (ValueError, IndexError):
+            action = (
+                list(options.values())[int(choice) - 1]
+                if choice.isnumeric()
+                else options[choice]
+            )
+        except (KeyError, ValueError, IndexError):
             self.invalid_input()
             return
 

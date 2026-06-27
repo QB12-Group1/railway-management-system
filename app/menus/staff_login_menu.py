@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from app.menus.base import BaseMenu
+from app.menus.staff_operations import StaffDashboard
 from app.models.user import UserRole
 
 if TYPE_CHECKING:
@@ -16,12 +17,12 @@ class StaffLoginMenu(BaseMenu):
 
         username = self.get_required_feedback("Username: ")
         if username is None:
-            self.cancel_operation(controller)
+            self.cancel_operation(controller, exit_menu=True)
             return
 
         password = self.get_required_feedback("Password: ")
         if password is None:
-            self.cancel_operation(controller)
+            self.cancel_operation(controller, exit_menu=True)
             return
 
         result = controller.services.auth.log_in(username, password)
@@ -35,3 +36,4 @@ class StaffLoginMenu(BaseMenu):
 
         print(f"Welcome back, {result.data.username}! Staff login successful.")
         controller.pop()
+        controller.push(StaffDashboard())
