@@ -64,3 +64,18 @@ class Train(Model):
         if self.capacity <= 0:
             raise ValueError("No seats available.")
         self.capacity -= 1
+
+    def __str__(self) -> str:
+        """
+        Returns a concise representation of the train: Class[Name]: Status (Availability).
+        """
+        railway = self.railway_id or "N/A"
+        return (
+            f"{self.__class__.__name__}[{self.name}]: "
+            f"{self.capacity}/{self.max_capacity} seats | "
+            f"price={self.ticket_price:.2f} | "
+            f"speed={self.average_velocity:.1f} km/h | "
+            f"stop={self.stop_time:.1f} min | "
+            f"quality={self.quality_index:.1f} | "
+            f"railway={railway}"
+        )

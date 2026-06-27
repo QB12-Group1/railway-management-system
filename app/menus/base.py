@@ -13,7 +13,7 @@ if TYPE_CHECKING:
 MenuAction = Callable[["MenuController"], None]
 """Callable type used by menu options to receive and update the controller."""
 
-CANCEL_COMMAND = "exit"
+CANCEL_COMMAND = ["exit", "cancel"]
 """Input command used to cancel the current menu operation."""
 
 
@@ -48,7 +48,7 @@ class BaseMenu(ABC):
 
     def is_cancel_command(self, value: str) -> bool:
         """Return True when the user input requests cancelling the operation."""
-        return value.lower() == CANCEL_COMMAND
+        return value.lower() in CANCEL_COMMAND
 
     def pause(self, prompt: str = "Press Enter to continue...") -> None:
         """Wait for the user before continuing to the next menu render."""
@@ -80,8 +80,12 @@ class BaseMenu(ABC):
             return
 
         try:
-            action = list(options.values())[int(choice) - 1]
-        except (ValueError, IndexError):
+            action = (
+                list(options.values())[int(choice) - 1]
+                if choice.isnumeric()
+                else options[choice]
+            )
+        except (KeyError, ValueError, IndexError):
             self.invalid_input()
             return
 
