@@ -4,7 +4,14 @@ version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
-dependencies = []
+dependencies = [
+    "inquirerpy>=0.3.4",
+    "platformdirs>=4.10.0",
+    "pydantic>=2.13.4",
+    "pydantic-settings>=2.14.2",
+    "python-dotenv>=1.2.2",
+    "rich>=15.0.0",
+]
 
 [dependency-groups]
 dev = ["pre-commit>=4.6.0", "pyright>=1.1.410", "ruff>=0.15.18"]
