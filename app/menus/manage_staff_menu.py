@@ -22,7 +22,7 @@ class ManageStaff(BaseMenu):
         )
 
     def add_staff(self, controller: MenuController) -> None:
-        self.show_title("Add Staff")
+        self.show_title("Register")
 
         username = self.get_required_feedback("Staff username: ")
 
@@ -30,38 +30,38 @@ class ManageStaff(BaseMenu):
             self.cancel_operation(controller)
             return
 
-        password = self.get_required_feedback("Staff Password: ")
+        password = self.get_required_feedback("Staff password: ")
         if password is None:
             self.cancel_operation(controller)
             return
 
-        full_name = self.get_required_feedback("Full Name Staff: ")
+        full_name = self.get_required_feedback("Staff full name: ")
         if full_name is None:
             self.cancel_operation(controller)
             return
 
-        email = self.get_required_feedback("Email: ")
+        email = self.get_required_feedback("Staff Email: ")
         if email is None:
             self.cancel_operation(controller)
             return
 
-        action = controller.services.admin.add_staff(
+        result = controller.services.admin.add_staff(
             username, password, full_name, email
         )
-        print(action.message)
+        print(result.message)
         self.pause()
 
     def remove_staff(self, controller: MenuController) -> None:
-        self.show_title("Remove Staff")
+        self.show_title("Remove")
 
-        username = self.get_required_feedback(" Username: ")
+        username = self.get_required_feedback("Username: ")
 
         if username is None:
             self.cancel_operation(controller)
             return
 
-        action = controller.services.admin.remove_staff(username)
-        print(action.message)
+        result = controller.services.admin.remove_staff(username)
+        print(result.message)
         self.pause()
 
     def list_staff(self, controller: MenuController) -> None:
@@ -70,7 +70,7 @@ class ManageStaff(BaseMenu):
         action = controller.services.admin.get_all_staff()
 
         if not action.data:
-            print("No Staff found.")
+            print("No staff found.")
             self.pause()
             return
 

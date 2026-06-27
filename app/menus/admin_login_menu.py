@@ -1,6 +1,7 @@
 from typing import TYPE_CHECKING
 
 from app.menus.base import BaseMenu
+from app.menus.manage_staff_menu import ManageStaff
 from app.models.user import UserRole
 
 if TYPE_CHECKING:
@@ -34,5 +35,5 @@ class AdminLoginMenu(BaseMenu):
             return
 
         print(f"Welcome back, {result.data.username}! Admin login successful.")
-        self.show_not_implemented(controller)  # TODO: implement admin dashboard menu
         controller.pop()
+        controller.push(ManageStaff())
