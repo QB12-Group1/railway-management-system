@@ -59,7 +59,10 @@ class AdminService(Service):
         if new_staff.data is None:
             return self.failure("Failed to create staff.")
 
-        return self.success("Staff member added successfully.", new_staff.data)
+        return self.success(
+            f"Train '{new_staff.data.username}' has been registered successfully.",
+            new_staff.data,
+        )
 
     def remove_staff(self, username: str) -> ServiceResult[None]:
         """
@@ -81,7 +84,7 @@ class AdminService(Service):
             return self.failure(f"User '{username}' is not a staff member.")
 
         self.user_repository.remove(user)
-        return self.success("Staff member removed successfully.")
+        return self.success(f"Staff '{user.username}' has been removed successfully.")
 
     def get_all_staff(self) -> ServiceResult[list[Staff]]:
         """
@@ -93,4 +96,4 @@ class AdminService(Service):
         """
         users = self.user_repository.get_all()
         staffs = [user for user in users if isinstance(user, Staff)]
-        return self.success("Staff list retrieved successfully", staffs)
+        return self.success("All staffs have been retrieved.", staffs)

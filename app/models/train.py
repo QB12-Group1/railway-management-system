@@ -73,9 +73,9 @@ class Train(Model):
         return (
             f"{self.__class__.__name__}[{self.name}]: "
             f"{self.capacity}/{self.max_capacity} seats | "
-            f"price={self.ticket_price:.2f} | "
-            f"speed={self.average_velocity:.1f} km/h | "
-            f"stop={self.stop_time:.1f} min | "
-            f"quality={self.quality_index:.1f} | "
-            f"railway={railway}"
+            f"price = {self.ticket_price:.2f} | "
+            f"speed = {self.average_velocity:.1f} km/h | "
+            f"stop = {self.stop_time:.1f} min | "
+            f"quality = {self.quality_index:.1f} | "
+            f"railway = {railway}"
         )
