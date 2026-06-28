@@ -1,4 +1,4 @@
-from app.models.user import Customer, User
+from app.models.user import Customer, Staff, User
 from app.repositories.base import Repository
 
 
@@ -25,7 +25,7 @@ class UserRepository(Repository[User]):
                 return user
         return None
 
-    def get_by_email(self, email: str) -> Customer | None:
+    def get_by_email(self, email: str) -> Customer | Staff | None:
         """
         Retrieve a customer by their email address.
 
@@ -36,7 +36,7 @@ class UserRepository(Repository[User]):
             Customer | None: The matching customer if found, otherwise None.
         """
         for user in self.items:
-            if isinstance(user, Customer) and user.email == email:
+            if isinstance(user, Customer | Staff) and user.email == email:
                 return user
         return None
 
