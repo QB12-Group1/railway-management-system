@@ -28,6 +28,7 @@ class CustomerService(Service):
         username: str,
         new_full_name: str | None = None,
         new_email: str | None = None,
+        new_password: str | None = None,
     ) -> ServiceResult[Customer]:
         """
         Update a customer's profile information.
@@ -39,6 +40,7 @@ class CustomerService(Service):
             username (str): The username of the customer to update.
             new_full_name (str | None): New full name, if provided.
             new_email (str | None): New email address, if provided.
+            new_password (str | None): New password, if provided.
 
         Returns:
             ServiceResult[Customer]: A success result with the updated Customer,
@@ -57,31 +59,6 @@ class CustomerService(Service):
                 return self.failure(f"Email '{new_email}' is already taken.")
 
         self.user_repository.update_by_username(
-            username, full_name=new_full_name, email=new_email
+            username, password=new_password, full_name=new_full_name, email=new_email
         )
         return self.success("Profile updated successfully.", user)
-
-    def update_password(
-        self, username: str, new_password: str
-    ) -> ServiceResult[Customer]:
-        """
-        Update a customer's password.
-
-        Args:
-            username (str): The username of the customer to update.
-            new_password (str): The new password to set.
-
-        Returns:
-            ServiceResult[Customer]: A success result if updated,
-            or a failure result if the user is not found or is not a customer.
-        """
-        user = self.user_repository.get_by_username(username)
-
-        if user is None:
-            return self.failure(f"User '{username}' not found.")
-
-        if not isinstance(user, Customer):
-            return self.failure(f"User '{username}' is not a customer member.")
-
-        self.user_repository.update_by_username(username, password=new_password)
-        return self.success("Password updated successfully.", user)

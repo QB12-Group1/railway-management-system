@@ -204,15 +204,19 @@ class StaffService(Service):
         if not result.success:
             return self.failure(result.message)
 
-        train = Train(
-            name,
-            railway.id,
-            average_velocity,
-            stop_time,
-            quality_index,
-            ticket_price,
-            capacity,
-        )
+        try:
+            train = Train(
+                name,
+                railway.id,
+                average_velocity,
+                stop_time,
+                quality_index,
+                ticket_price,
+                capacity,
+            )
+        except ValueError as e:
+            return self.failure(f"Invalid train data: {e}")
+
         self.train_repository.add(train)
         return self.success(f"Train '{name}' has been registered successfully.", train)
 
@@ -271,24 +275,31 @@ class StaffService(Service):
                     f"Cannot rename to '{new_name}' because that name is already in use."
                 )
 
+        railway_id = None
         train = result.data
         if new_railway_name:
-            result = self._get_railway_or_failure(new_railway_name)
-            if not result.success:
+            railway = self._get_railway_or_failure(new_railway_name)
+            if not railway.success:
                 return self.failure(
                     f"No railway found with the name '{new_railway_name}'."
                 )
+            if railway.data.id != train.railway_id:
+                railway_id = railway.data.id
 
-        self.train_repository.update_by_name(
-            name,
-            new_name,
-            result.data.id if result.data.id != train.railway_id else None,
-            new_average_velocity,
-            new_stop_time,
-            new_quality_index,
-            new_ticket_price,
-            new_capacity,
-        )
+        try:
+            self.train_repository.update_by_name(
+                name,
+                new_name,
+                railway_id,
+                new_average_velocity,
+                new_stop_time,
+                new_quality_index,
+                new_ticket_price,
+                new_capacity,
+            )
+        except ValueError as e:
+            return self.failure(f"Invalid train data: {e}")
+
         return self.success(
             f"Train '{new_name if new_name else name}' has been updated successfully.",
             train,
