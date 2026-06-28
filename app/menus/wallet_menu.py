@@ -9,26 +9,26 @@ if TYPE_CHECKING:
 
 class WalletMenu(BaseMenu):
     def __init__(self, customer: Customer) -> None:
-        self.customer = customer
+        self._customer = customer
 
     def display(self, controller: MenuController) -> None:
         self.handle_options(
             controller,
-            "Wallet Menu",
+            "Wallet",
             {
-                "Charge wallet": self.charge_wallet,
-                "Link card": self.link_card,
-                "My cards": self.show_card,
+                "Charge Wallet": self.charge_wallet,
+                "Link Card": self.link_card,
+                "My Card": self.show_card,
                 "Go back": lambda controller: controller.pop(),
             },
         )
 
     def charge_wallet(self, controller: MenuController) -> None:
-        self.show_title("Charge Wallet")
+        self.show_title(f"Charge Wallet[{self._customer.wallet.balance}]")
 
-        print(f"Current balance : {self.customer.wallet.balance}")
+        print(f"Current balance: {self._customer.wallet.balance}")
 
-        if self.customer.wallet.linked_card is None:
+        if self._customer.wallet.linked_card is None:
             print("No card linked. Please link a card first.")
             self.pause()
             self.link_card(controller)
@@ -42,17 +42,24 @@ class WalletMenu(BaseMenu):
         try:
             amount = float(amount)
         except ValueError:
-            print("Invalid input! Please enter a valid number.")
+            print("Invalid amount! Please enter a positive number.")
             self.pause()
             return
 
         result = controller.services.wallet.charge_wallet(
-            self.customer.username, amount
+            self._customer.username, amount
         )
         print(result.message)
+        if result.success:
+            print(f"Current balance: {result.data}")
         self.pause()
 
     def link_card(self, controller: MenuController) -> None:
+        if self._customer.wallet.linked_card is not None:
+            print("A card is already linked to this wallet.")
+            self.pause()
+            return
+
         self.show_title("Link Card")
 
         card_number = self.get_required_feedback("Card number (16 digits): ")
@@ -65,7 +72,7 @@ class WalletMenu(BaseMenu):
             self.cancel_operation(controller)
             return
 
-        exp_year = self.get_required_feedback("Expiration year (1403-1408) : ")
+        exp_year = self.get_required_feedback("Expiration year (1403-1408): ")
         if exp_year is None:
             self.cancel_operation(controller)
             return
@@ -83,14 +90,13 @@ class WalletMenu(BaseMenu):
         try:
             exp_month = int(exp_month)
             exp_year = int(exp_year)
-
         except ValueError:
-            print("Invalid input! Please enter a valid number.")
+            print("Invalid expiration date.")
             self.pause()
             return
 
         result = controller.services.wallet.link_card(
-            self.customer.username,
+            self._customer.username,
             card_number,
             exp_month,
             exp_year,
@@ -100,16 +106,18 @@ class WalletMenu(BaseMenu):
         print(result.message)
         self.pause()
 
-    def show_card(self, controller: MenuController) -> None:
-        self.show_title("My Cards")
+    def show_card(self, _: MenuController) -> None:
+        self.show_title("My Card")
 
-        if self.customer.wallet.linked_card is None:
+        card = self._customer.wallet.linked_card
+        if card is None:
             print("No card linked to this wallet.")
             self.pause()
             return
 
-        card = self.customer.wallet.linked_card
         masked = "**** **** **** " + card.card_number[-4:]
-        print(f"Card number : {masked}")
-        print(f"Expiry : {card.expiration_month}/{card.expiration_year}")
+        print(f"Card number: {masked}")
+        print(
+            f"Expiry: {card.expiration_year}/{'0' if card.expiration_month < 10 else '' + str(card.expiration_month)}"
+        )
         self.pause()

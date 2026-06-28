@@ -1,6 +1,7 @@
 from app.menu_controller import MenuController
 from app.menus.base import BaseMenu
 from app.menus.ticket_purchase_menu import TicketPurchaseMenu
+from app.menus.wallet_menu import WalletMenu
 from app.models.user import Customer
 
 
@@ -16,7 +17,9 @@ class CustomerOperationsMenu(BaseMenu):
                 "Manage Tickets": lambda controller: controller.push(
                     TicketPurchaseMenu(self._customer)
                 ),
-                "Manage Wallet": self.show_not_implemented,
+                "Manage Wallet": lambda controller: controller.push(
+                    WalletMenu(self._customer)
+                ),
                 "Update Profile": self.modify_customer,
                 "View Profile": self.view_profile,
                 "Exit": lambda controller: controller.pop(),
