@@ -224,3 +224,37 @@ class TicketService(Service):
         return self.success(
             f"Found {len(available_trains)} available train(s).", available_trains
         )
+
+    def get_customer_tickets(
+        self, customer: Customer
+    ) -> ServiceResult[list[tuple[Ticket, Train]]]:
+        """
+        Retrieve all tickets purchased by a specific customer along with their trains.
+
+        This method iterates through all stored tickets, selects those belonging to the
+        provided customer, and pairs each ticket with its corresponding train. Only
+        tickets whose associated train exists in the train repository are included.
+
+        Args:
+            customer (Customer): The customer whose purchased tickets should be retrieved.
+
+        Returns:
+            ServiceResult[list[tuple[Ticket, Train]]]:
+                - Success: Contains a list of `(Ticket, Train)` tuples representing the
+                customer's purchased tickets and their associated trains.
+                - Failure: Returned if the customer has not purchased any tickets.
+        """
+        purchased_tickets: list[tuple[Ticket, Train]] = []
+
+        for ticket in self.ticket_repository.get_all():
+            if ticket.customer_id == customer.id:
+                train = self.train_repository.get_by_id(ticket.train_id)
+                if train is not None:
+                    purchased_tickets.append((ticket, train))
+
+        if not purchased_tickets:
+            return self.failure("Customer has not purchased any tickets")
+
+        return self.success(
+            "Customer tickets retrieved successfully", purchased_tickets
+        )

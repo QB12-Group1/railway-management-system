@@ -50,8 +50,6 @@ class WalletMenu(BaseMenu):
             self._customer.username, amount
         )
         print(result.message)
-        if result.success:
-            print(f"Current balance: {result.data}")
         self.pause()
 
     def link_card(self, controller: MenuController) -> None:
