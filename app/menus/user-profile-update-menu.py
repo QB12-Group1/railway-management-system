@@ -13,7 +13,7 @@ class UserProfileUpdate(BaseMenu):
     def display(self, controller: MenuController) -> None:
         self.handle_options(
             controller,
-            "Manage Staff",
+            "User Profile Update",
             {
                 "Show Profile User": self.show_profile_user,
                 "Update User Profile": self.update_user,
