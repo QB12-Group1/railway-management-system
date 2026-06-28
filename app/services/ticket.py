@@ -168,8 +168,9 @@ class TicketService(Service):
                         train_id = train.id
 
                     file.write(
-                        f"Purchase Time: {ticket.purchase_time}"
-                        f"Customer: {customer.full_name} | Destination: {ticket.destination_station} | "
+                        f"Ticket ID: {ticket.id} | "
+                        f"Purchase Time: {ticket.purchase_time} | "
+                        f"Customer: {customer.full_name} (ID: {customer.id}) | Destination: {ticket.destination_station} | "
                         f"Train: {train_name} (ID: {train_id}) | Price: {ticket.ticket_price}\n"
                     )
             return self.success(f"Tickets successfully exported to {file_path}.")
@@ -203,7 +204,7 @@ class TicketService(Service):
             available_trains.append((railway, train))
 
         if not available_trains:
-            return self.failure("No trains found.")
+            return self.failure("No available train found.")
 
         return self.success(
             f"Found {len(available_trains)} available train(s).", available_trains
