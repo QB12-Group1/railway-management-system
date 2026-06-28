@@ -9,14 +9,15 @@ if TYPE_CHECKING:
 
 class TicketPurchaseMenu(BaseMenu):
     def __init__(self, customer: Customer) -> None:
-        self.customer = customer
+        self._customer = customer
 
     def display(self, controller: MenuController) -> None:
         self.handle_options(
             controller,
             "Ticket Purchase Menu",
             {
-                "View trains & Buy ticket": self.buy_ticket,
+                "Buy Ticket": self.buy_ticket,
+                "View Tickets": self.list_tickets,
                 "Exit": lambda controller: controller.pop(),
             },
         )
@@ -37,7 +38,7 @@ class TicketPurchaseMenu(BaseMenu):
                 f"[{i + 1}] {train.name} | {railway.route} | {len(railway.stations)} stations | Cap: {train.capacity} | Price: {train.ticket_price} | Quality: {train.quality_index}/10"
             )
 
-        print(f"\nYour wallet balance: {self.customer.wallet.balance}")
+        print(f"\nYour wallet balance: {self._customer.wallet.balance}")
 
         choice = self.get_required_feedback("\nSelect a train: ")
         if choice is None:
@@ -69,7 +70,7 @@ class TicketPurchaseMenu(BaseMenu):
             return
 
         result = controller.services.ticket.buy_ticket(
-            self.customer.id, train.name, destination, quantity
+            self._customer.id, train.name, destination, quantity
         )
         print(result.message)
         if result.success:
@@ -77,6 +78,18 @@ class TicketPurchaseMenu(BaseMenu):
                 "tickets.txt"
             )
             print(export_result.message)
-            print(f"\nYour current wallet balance: {self.customer.wallet.balance}")
+            print(f"\nYour current wallet balance: {self._customer.wallet.balance}")
 
+        self.pause()
+
+    def list_tickets(self, controller: MenuController) -> None:
+        result = controller.services.ticket.get_customer_tickets(self._customer)
+        if not result.success:
+            print("No tickets have been bought.")
+            self.pause()
+            return
+
+        for ticket, train in result.data:
+            ticket_info = ticket.get_str(self._customer, train)
+            print(ticket_info)
         self.pause()

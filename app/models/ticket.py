@@ -1,4 +1,6 @@
 from app.models.base import Model
+from app.models.train import Train
+from app.models.user import Customer
 
 
 class Ticket(Model):
@@ -38,3 +40,11 @@ class Ticket(Model):
         self.ticket_price = ticket_price
         self.customer_id = customer_id
         self.purchase_time = purchase_time
+
+    def get_str(self, customer: Customer, train: Train) -> str:
+        return (
+            f"Ticket ID: {self.id} | "
+            f"Purchase Time: {self.purchase_time} | "
+            f"Customer: {customer.full_name} (ID: {customer.id}) | Destination: {self.destination_station} | "
+            f"Train: {train.name} (ID: {train.id}) | Price: {self.ticket_price}\n"
+        )
