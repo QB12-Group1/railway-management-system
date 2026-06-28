@@ -2,6 +2,7 @@ from typing import TYPE_CHECKING
 
 from app.menus.base import BaseMenu
 from app.menus.customer_login_menu import CustomerLoginMenu
+from app.menus.customer_registration_menu import CustomerRegistrationMenu
 
 if TYPE_CHECKING:
     from app.menu_controller import MenuController
@@ -13,7 +14,9 @@ class CustomerAuthMenu(BaseMenu):
             controller,
             "Customer Authentication Menu",
             {
-                "Register": self.show_not_implemented,  # TODO: implement user registeration menu
+                "Register": lambda controller: controller.push(
+                    CustomerRegistrationMenu()
+                ),
                 "Log-in": lambda controller: controller.push(CustomerLoginMenu()),
                 "Go back": lambda controller: controller.pop(),
             },

@@ -204,15 +204,19 @@ class StaffService(Service):
         if not result.success:
             return self.failure(result.message)
 
-        train = Train(
-            name,
-            railway.id,
-            average_velocity,
-            stop_time,
-            quality_index,
-            ticket_price,
-            capacity,
-        )
+        try:
+            train = Train(
+                name,
+                railway.id,
+                average_velocity,
+                stop_time,
+                quality_index,
+                ticket_price,
+                capacity,
+            )
+        except ValueError as e:
+            return self.failure(f"Invalid train data: {e}")
+
         self.train_repository.add(train)
         return self.success(f"Train '{name}' has been registered successfully.", train)
 
@@ -282,16 +286,20 @@ class StaffService(Service):
             if railway.data.id != train.railway_id:
                 railway_id = railway.data.id
 
-        self.train_repository.update_by_name(
-            name,
-            new_name,
-            railway_id,
-            new_average_velocity,
-            new_stop_time,
-            new_quality_index,
-            new_ticket_price,
-            new_capacity,
-        )
+        try:
+            self.train_repository.update_by_name(
+                name,
+                new_name,
+                railway_id,
+                new_average_velocity,
+                new_stop_time,
+                new_quality_index,
+                new_ticket_price,
+                new_capacity,
+            )
+        except ValueError as e:
+            return self.failure(f"Invalid train data: {e}")
+
         return self.success(
             f"Train '{new_name if new_name else name}' has been updated successfully.",
             train,
