@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING
 
 from app.menus.base import BaseMenu
-from app.models.user import UserRole
+from app.menus.customer_operations import CustomerOperationsMenu
+from app.models.user import Customer
 
 if TYPE_CHECKING:
     from app.menu_controller import MenuController
@@ -29,10 +30,10 @@ class CustomerLoginMenu(BaseMenu):
             print(result.message)
             return
 
-        if result.data is None or result.data.role != UserRole.CUSTOMER:
-            print("Only customers can access this menu.")
-            return
-
         print(f"Welcome back, {result.data.username}! Customer login successful.")
         controller.pop()
-        # TODO: push the customer dashboard here
+
+        if result.data is None or not isinstance(result.data, Customer):
+            print("Only customers can access this menu.")
+            return
+        controller.push(CustomerOperationsMenu(result.data))
