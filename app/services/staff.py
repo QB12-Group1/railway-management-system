@@ -215,7 +215,7 @@ class StaffService(Service):
                 capacity,
             )
         except ValueError as e:
-            return self.failure(f"Invalid train data : {e}")
+            return self.failure(f"Invalid train data: {e}")
 
         self.train_repository.add(train)
         return self.success(f"Train '{name}' has been registered successfully.", train)
@@ -298,7 +298,7 @@ class StaffService(Service):
                 new_capacity,
             )
         except ValueError as e:
-            return self.failure(f"Invalid train data : {e}")
+            return self.failure(f"Invalid train data: {e}")
 
         return self.success(
             f"Train '{new_name if new_name else name}' has been updated successfully.",
