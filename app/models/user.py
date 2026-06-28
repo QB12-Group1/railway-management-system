@@ -97,3 +97,6 @@ class Customer(User):
         self.full_name = full_name
         self.email = email
         self.wallet = Wallet()
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}[{self.username}]: full_name = {self.full_name} | email = {self.email} | password = {self.password}"
