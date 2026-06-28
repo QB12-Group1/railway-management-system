@@ -3,10 +3,12 @@ import time
 from app.models.railway import Railway
 from app.models.ticket import Ticket
 from app.models.train import Train
+from app.models.transaction import Transaction, TransactionType
 from app.models.user import Customer
 from app.repositories.railway import RailwayRepository
 from app.repositories.ticket import TicketRepository
 from app.repositories.train import TrainRepository
+from app.repositories.transaction import TransactionRepository
 from app.repositories.user import UserRepository
 from app.services.base import Service, ServiceResult
 
@@ -26,6 +28,7 @@ class TicketService(Service):
         train_repository: TrainRepository,
         user_repository: UserRepository,
         railway_repository: RailwayRepository,
+        transaction_repository: TransactionRepository,
     ) -> None:
         """
         Initializes the TicketService with necessary repositories.
@@ -40,6 +43,7 @@ class TicketService(Service):
         self.train_repository = train_repository
         self.user_repository = user_repository
         self.railway_repository = railway_repository
+        self.transaction_repository = transaction_repository
 
     def buy_ticket(
         self, customer_id: str, train_name: str, destination_station: str, quantity=1
@@ -125,6 +129,17 @@ class TicketService(Service):
         ]
 
         self.ticket_repository.add_many(tickets)
+
+        self.transaction_repository.add(
+            Transaction(
+                customer_id=customer_id,
+                amount=-total_cost,
+                transaction_type=TransactionType.PURCHASE,
+                balance_after=customer.wallet.balance,
+                t=fmt_time,
+            )
+        )
+
         return self.success(
             f"Successfully purchased {quantity} ticket(s) for train '{train_name}'.",
             tickets,

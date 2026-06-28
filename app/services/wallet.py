@@ -103,6 +103,13 @@ class WalletService(Service):
 
         user.wallet.charge(amount)
 
+        self.save_transaction(
+            customer_id=user.id,
+            amount=amount,
+            transaction_type=TransactionType.CHARGE,
+            balance_after=user.wallet.balance,
+        )
+
         return self.success(
             f"Wallet charged successfully. New balance: {user.wallet.balance}",
             user.wallet.balance,

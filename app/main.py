@@ -37,6 +37,7 @@ def main() -> None:
         train_repository,
         user_repository,
         railway_repository,
+        transaction_repository,
     )
 
     services = ServiceContext(
