@@ -14,7 +14,7 @@ class WalletMenu(BaseMenu):
     def display(self, controller: MenuController) -> None:
         self.handle_options(
             controller,
-            "Wallet",
+            f"Wallet[{self._customer.wallet.balance}]",
             {
                 "Charge Wallet": self.charge_wallet,
                 "Link Card": self.link_card,
@@ -24,7 +24,7 @@ class WalletMenu(BaseMenu):
         )
 
     def charge_wallet(self, controller: MenuController) -> None:
-        self.show_title(f"Charge Wallet[{self._customer.wallet.balance}]")
+        self.show_title("Charge Wallet")
 
         print(f"Current balance: {self._customer.wallet.balance}")
 
@@ -90,6 +90,8 @@ class WalletMenu(BaseMenu):
         try:
             exp_month = int(exp_month)
             exp_year = int(exp_year)
+            if 3 <= exp_year <= 8:
+                exp_year += 1400
         except ValueError:
             print("Invalid expiration date.")
             self.pause()
@@ -118,6 +120,6 @@ class WalletMenu(BaseMenu):
         masked = "**** **** **** " + card.card_number[-4:]
         print(f"Card number: {masked}")
         print(
-            f"Expiry: {card.expiration_year}/{'0' if card.expiration_month < 10 else '' + str(card.expiration_month)}"
+            f"Expiry: {card.expiration_year}/{('0' if card.expiration_month < 10 else '') + str(card.expiration_month)}"
         )
         self.pause()
