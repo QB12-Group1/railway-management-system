@@ -35,3 +35,4 @@ class CustomerLoginMenu(BaseMenu):
 
         print(f"Welcome back, {result.data.username}! Customer login successful.")
         controller.pop()
+        # TODO: push the customer dashboard here

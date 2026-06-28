@@ -41,4 +41,3 @@ class CustomerRegistrationMenu(BaseMenu):
         print(result.message)
         self.pause()
         controller.pop()
-        # TODO: push the customer dashboard here
