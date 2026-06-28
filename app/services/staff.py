@@ -271,18 +271,21 @@ class StaffService(Service):
                     f"Cannot rename to '{new_name}' because that name is already in use."
                 )
 
+        railway_id = None
         train = result.data
         if new_railway_name:
-            result = self._get_railway_or_failure(new_railway_name)
-            if not result.success:
+            railway = self._get_railway_or_failure(new_railway_name)
+            if not railway.success:
                 return self.failure(
                     f"No railway found with the name '{new_railway_name}'."
                 )
+            if railway.data.id != train.railway_id:
+                railway_id = railway.data.id
 
         self.train_repository.update_by_name(
             name,
             new_name,
-            result.data.id if result.data.id != train.railway_id else None,
+            railway_id,
             new_average_velocity,
             new_stop_time,
             new_quality_index,

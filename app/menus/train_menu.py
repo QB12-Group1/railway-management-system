@@ -159,9 +159,9 @@ class TrainManagementMenu(BaseMenu):
             new_name,
             new_railway_name,
             new_average_velocity,
+            new_stop_time,
             new_quality_index,
             new_ticket_price,
-            new_stop_time,
             new_capacity,
         )
         print(result.message)
