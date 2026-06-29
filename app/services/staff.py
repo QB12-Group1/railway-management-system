@@ -392,8 +392,8 @@ class StaffService(Service):
         Returns:
             ServiceResult[None]: Success result if valid, otherwise failure.
         """
-        if not (0 <= quality_index <= 10):
-            return self.failure("Quality index must be between 0 and 10.")
+        if not (1 <= quality_index <= 10):
+            return self.failure("Quality index must be between 1 and 10.")
         return self.success("Quality index is valid.")
 
     # TODO: implement a better validation (cheking if the origin and stations aren't included in the stations list)
