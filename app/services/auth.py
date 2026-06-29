@@ -3,6 +3,12 @@ from typing import TypeVar
 from app.models.user import Admin, Customer, Staff, User
 from app.repositories.user import UserRepository
 from app.services.base import Service, ServiceResult
+from app.utils.validators import (
+    INVALID_PASSWORD_MESSAGE,
+    invalid_email_message,
+    validate_email,
+    validate_password,
+)
 
 TUser = TypeVar("TUser", bound=User)
 
@@ -44,8 +50,15 @@ class AuthenticationService(Service):
         if self.user_repository.exists_by_username(user.username):
             return self.failure(f"Username {user.username} is already taken.")
 
-        if email and self.user_repository.exists_by_email(email):
-            return self.failure(f"Email {email} is already taken.")
+        if email:
+            if not validate_email(email):
+                message = invalid_email_message(email)
+                return self.failure(message)
+            if self.user_repository.exists_by_email(email):
+                return self.failure(f"Email {email} is already taken.")
+
+        if not validate_password(user.password):
+            return self.failure(INVALID_PASSWORD_MESSAGE)
 
         self.user_repository.add(user)
         return self.success("Registration successful!", user)

@@ -1,6 +1,12 @@
 from app.models.user import Customer
 from app.repositories.user import UserRepository
 from app.services.base import Service, ServiceResult
+from app.utils.validators import (
+    INVALID_PASSWORD_MESSAGE,
+    invalid_email_message,
+    validate_email,
+    validate_password,
+)
 
 
 class CustomerService(Service):
@@ -55,8 +61,18 @@ class CustomerService(Service):
             return self.failure(f"User '{username}' is not a customer member.")
 
         if new_email is not None and new_email != user.email:
+            if not validate_email(new_email):
+                message = invalid_email_message(new_email)
+                return self.failure(message)
             if self.user_repository.exists_by_email(new_email):
                 return self.failure(f"Email '{new_email}' is already taken.")
+
+        if (
+            new_password is not None
+            and new_password != user.password
+            and not validate_password(new_password)
+        ):
+            return self.failure(INVALID_PASSWORD_MESSAGE)
 
         self.user_repository.update_by_username(
             username, password=new_password, full_name=new_full_name, email=new_email
