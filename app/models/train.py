@@ -8,7 +8,7 @@ class Train(Model):
     Represents a train available for booking in the railway system.
 
     A train belongs to a railway and contains operational information such as
-    its travel speed, route distance, station stop time, service quality,
+    its travel speed, station stop time, service quality,
     ticket price, passenger capacity, and scheduled departure time. The class
     is used to model trains that passengers can book seats on.
 
@@ -20,7 +20,6 @@ class Train(Model):
         quality_index (float): Service quality rating (typically between 0 and 10).
         ticket_price (float): Price of a single ticket for this train.
         capacity (int): Total number of seats available on the train.
-        travel_distance (int): Distance of the train route.
         start_time (time): Scheduled departure time of the train.
 
     Attributes:
@@ -32,11 +31,9 @@ class Train(Model):
         ticket_price (float): Cost of a single passenger ticket.
         capacity (int): Current number of available seats remaining.
         max_capacity (int): Maximum seat capacity of the train.
-        travel_distance (int): Total distance of the train route.
         start_time (time): Scheduled departure time of the train.
     """
 
-    # TODO: update docstrings
     def __init__(
         self,
         name: str,
@@ -46,7 +43,6 @@ class Train(Model):
         quality_index: float,
         ticket_price: float,
         capacity: int,
-        travel_distance: int,
         start_time: time,
     ) -> None:
         super().__init__()
@@ -58,9 +54,6 @@ class Train(Model):
         self.ticket_price = ticket_price
         self.capacity = capacity
         self.max_capacity = capacity
-        self.travel_distance = (
-            travel_distance  # TODO: This field should be defined as a Railway property
-        )
         self.start_time = start_time
 
     @property
@@ -127,44 +120,6 @@ class Train(Model):
             raise ValueError("Max capacity must be greater than zero")
         self._max_capacity = value
 
-    @property
-    def travel_distance(self) -> int:
-        """
-        Get the travel distance of the train.
-
-        Returns:
-            int: The total distance the train travels on its route.
-        """
-        return self._travel_distance
-
-    @travel_distance.setter
-    def travel_distance(self, value: int) -> None:
-        """
-        Set the travel distance of the train.
-
-        Args:
-            value (int): The distance the train travels.
-
-        Raises:
-            ValueError: If the distance is less than or equal to zero.
-        """
-        if value <= 0:
-            raise ValueError("Travel distance must be greater than zero")
-        self._travel_distance = value
-
-    @property
-    def travel_time(self) -> float:
-        """
-        Calculate the estimated travel time of the train.
-
-        The travel time is computed using the train's travel distance
-        divided by its average velocity.
-
-        Returns:
-            float: Estimated travel time for the route.
-        """
-        return self.travel_distance / self.average_velocity
-
     def book(self) -> None:
         """
         Reserve a seat on the train.
@@ -191,5 +146,6 @@ class Train(Model):
             f"speed = {self.average_velocity:.1f} km/h | "
             f"stop = {self.stop_time:.1f} min | "
             f"quality = {self.quality_index:.1f} | "
+            f"start_time = {self.start_time} | "
             f"railway = {railway}"
         )

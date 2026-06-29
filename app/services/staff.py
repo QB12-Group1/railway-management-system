@@ -30,7 +30,12 @@ class StaffService(Service):
         self.train_repository = train_repository
 
     def add_railway(
-        self, name: str, origin: str, destination: str, stations: list[str]
+        self,
+        name: str,
+        origin: str,
+        destination: str,
+        stations: list[str],
+        travel_distance: int,
     ) -> ServiceResult[Railway]:
         """
         Register a new railway route in the system.
@@ -40,6 +45,8 @@ class StaffService(Service):
             origin (str): Starting station name.
             destination (str): Ending station name.
             stations (list[str]): List of stations included in the route.
+            travel_distance (int): Total distance of the railway in kilometers.
+
 
         Returns:
             ServiceResult[Railway]: A success result containing the newly
@@ -52,7 +59,7 @@ class StaffService(Service):
         if not result.success:
             return self.failure(result.message)
 
-        railway = Railway(name, origin, destination, stations)
+        railway = Railway(name, origin, destination, stations, travel_distance)
         self.railway_repository.add(railway)
         return self.success(
             f"Railway '{name}' has been registered successfully.", railway
@@ -165,7 +172,6 @@ class StaffService(Service):
         quality_index: float,
         ticket_price: float,
         capacity: int,
-        travel_distance: int,
         start_time: time,
     ) -> ServiceResult[Train]:
         """
@@ -187,7 +193,6 @@ class StaffService(Service):
             quality_index (float): Service quality rating (expected range: 0–10).
             ticket_price (float): Base ticket price for passengers.
             capacity (int): Total number of seats available on the train.
-            travel_distance (int): Distance of the route covered by the train.
             start_time (time): Departure time of the train.
 
         Returns:
@@ -228,7 +233,6 @@ class StaffService(Service):
                 quality_index,
                 ticket_price,
                 capacity,
-                travel_distance,
                 start_time,
             )
         except ValueError as e:
@@ -239,48 +243,25 @@ class StaffService(Service):
             for item in self.train_repository.items
             if item.railway_id == railway.id
         ]
+
+        today = datetime.now().date()
+        new_start = datetime.combine(today, train.start_time)
+        new_travel_minutes = (railway.travel_distance / train.average_velocity) * 60
+        new_end = new_start + timedelta(minutes=new_travel_minutes + train.stop_time)
+
         for existing_train in trains_on_same_railway:
-            current_date = datetime.now()
-
-            new_train_travel_hours, new_train_travel_minutes = divmod(
-                train.travel_time, 60
-            )
-            existing_train_travel_hours, existing_train_travel_minutes = divmod(
-                existing_train.travel_time, 60
-            )
-            existing_train_stop_hours, existing_train_stop_minutes = divmod(
-                existing_train.stop_time, 60
+            existing_start = datetime.combine(today, existing_train.start_time)
+            existing_travel_minutes = (
+                railway.travel_distance / existing_train.average_velocity
+            ) * 60
+            existing_end = existing_start + timedelta(
+                minutes=existing_travel_minutes + existing_train.stop_time
             )
 
-            new_train_arrival_time = datetime(
-                current_date.year,
-                current_date.month,
-                current_date.day,
-                train.start_time.hour,
-                train.start_time.minute,
-            ) + timedelta(
-                hours=new_train_travel_hours, minutes=new_train_travel_minutes
-            )
-
-            existing_train_arrival_time = datetime(
-                current_date.year,
-                current_date.month,
-                current_date.day,
-                existing_train.start_time.hour,
-                existing_train.start_time.minute,
-            ) + timedelta(
-                hours=existing_train_travel_hours,
-                minutes=existing_train_travel_minutes,
-            )
-
-            existing_train_departure_time = existing_train_arrival_time + timedelta(
-                hours=existing_train_stop_hours,
-                minutes=existing_train_stop_minutes,
-            )
-            if new_train_arrival_time < existing_train_departure_time:
+            if new_start < existing_end and existing_start < new_end:
                 return self.failure(
                     f"Schedule collision detected with train '{existing_train.name}' "
-                    f"on railway '{railway.name}'. ヽ(*。>Д<)o゜"
+                    f"on railway '{railway.name}'."
                 )
 
         self.train_repository.add(train)

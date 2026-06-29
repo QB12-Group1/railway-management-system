@@ -112,7 +112,10 @@ class WalletService(Service):
         )
         self.transaction_repository.add(transaction)
         try:
-            self.transaction_repository.export_to_file("transactions.txt")
+            self.transaction_repository.export_customer_transactions(
+                customer_id=user.id, username=user.username
+            )
+
         except Exception as e:
             return self.failure(
                 f"An unexpected error occurred during ticket export: {str(e)}"
