@@ -83,7 +83,7 @@ class Train(Model):
     @quality_index.setter
     def quality_index(self, value: float) -> None:
         if not (0 <= value <= 10):
-            raise ValueError("Quality index must be between 0 and 10")
+            raise ValueError("Quality index must be between 1 and 10")
         self._quality_index = value
 
     @property
