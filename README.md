@@ -63,6 +63,6 @@ We welcome contributions! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for
 
 Our goal is to create a structured, extensible terminal app for multi-role railway management. We aim to keep the codebase clean, layered, and easy to grow as new features are added.
 
-##📄 License
+## 📄 License
 
 This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details.dd a license here if/when the project adopts one.
