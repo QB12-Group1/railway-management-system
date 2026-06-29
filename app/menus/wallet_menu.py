@@ -19,6 +19,7 @@ class WalletMenu(BaseMenu):
                 "Charge Wallet": self.charge_wallet,
                 "Link Card": self.link_card,
                 "My Card": self.show_card,
+                "Show Transactions": self.show_transactions,
                 "Go back": lambda controller: controller.pop(),
             },
         )
@@ -122,10 +123,10 @@ class WalletMenu(BaseMenu):
         )
         self.pause()
 
-    def show_transaction(self, controller: MenuController) -> None:
-        self.show_title("Recent Transaction (Last 5)")
+    def show_transactions(self, controller: MenuController) -> None:
+        self.show_title("Recent Transactions (Last 5)")
 
-        result = controller.services.wallet.get_transaction(self._customer.id)
+        result = controller.services.wallet.get_transactions(self._customer.id)
 
         if not result.success or not result.data:
             print(result.message)

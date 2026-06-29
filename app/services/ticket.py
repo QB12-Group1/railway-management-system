@@ -127,7 +127,6 @@ class TicketService(Service):
             )
             for _ in range(quantity)
         ]
-
         self.ticket_repository.add_many(tickets)
 
         self.transaction_repository.add(
@@ -139,6 +138,12 @@ class TicketService(Service):
                 t=fmt_time,
             )
         )
+        try:
+            self.transaction_repository.export_to_file("transactions.txt")
+        except Exception as e:
+            return self.failure(
+                f"An unexpected error occurred during ticket export: {str(e)}"
+            )
 
         return self.success(
             f"Successfully purchased {quantity} ticket(s) for train '{train_name}'.",

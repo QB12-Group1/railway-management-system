@@ -103,20 +103,28 @@ class WalletService(Service):
 
         user.wallet.charge(amount)
 
-        self.save_transaction(
-            customer_id=user.id,
-            amount=amount,
-            transaction_type=TransactionType.CHARGE,
-            balance_after=user.wallet.balance,
+        transaction = Transaction(
+            user.id,
+            amount,
+            TransactionType.CHARGE,
+            user.wallet.balance,
+            time.strftime("%Y-%m-%d | %H:%M:%S", time.localtime()),
         )
+        self.transaction_repository.add(transaction)
+        try:
+            self.transaction_repository.export_to_file("transactions.txt")
+        except Exception as e:
+            return self.failure(
+                f"An unexpected error occurred during ticket export: {str(e)}"
+            )
 
         return self.success(
             f"Wallet charged successfully. New balance: {user.wallet.balance}",
             user.wallet.balance,
         )
 
-    def get_transaction(self, customer_id: str) -> ServiceResult[list[Transaction]]:
-        transactions = self.transaction_repository.get_by_customer_id(
+    def get_transactions(self, customer_id: str) -> ServiceResult[list[Transaction]]:
+        transactions = self.transaction_repository.get_all_by_customer_id(
             customer_id, limit=5
         )
 
@@ -126,22 +134,3 @@ class WalletService(Service):
         return self.success(
             f"Found{len(transactions)} recent transaction(s).", transactions
         )
-
-    def save_transaction(
-        self,
-        customer_id: str,
-        amount: float,
-        transaction_type: TransactionType,
-        balance_after: float,
-    ) -> None:
-        t = time.strftime("%Y-%m-%d | %H:%M:%S", time.localtime())
-
-        transaction = Transaction(
-            customer_id,
-            amount,
-            transaction_type,
-            balance_after,
-            t,
-        )
-
-        self.transaction_repository.add(transaction)

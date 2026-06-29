@@ -27,8 +27,10 @@ class Transaction(Model):
     def __str__(self) -> str:
         sign = "+" if self.amount > 0 else ""
         return (
-            f"{self.time} | "
-            f"Type: {self.transaction_type.value:10} | "
-            f"Amount: {sign}{self.amount:.2f}"
+            f"Transaction ID: {self.id} | "
+            f"Customer ID: {self.customer_id} | "
+            f"Time: {self.time} | "
+            f"Type: {self.transaction_type.value} | "
+            f"Amount: {sign}{self.amount:.2f} | "
             f"Balance: {self.balance_after:.2f}"
         )
