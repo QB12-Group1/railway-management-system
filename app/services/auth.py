@@ -138,3 +138,25 @@ class AuthenticationService(Service):
             return self.failure("Password doesn't match.")
 
         return self.success("Login successful.", user)
+
+    def get_all_admins(self) -> ServiceResult[list[Admin]]:
+        """
+        Retrieve all users with the Admin role from the user repository.
+
+        This method filters the list of all users returned by the repository
+        and selects only those that are instances of the `Admin` class.
+
+        Returns:
+            ServiceResult[list[Admin]]: A successful service result containing
+            the list of all Admin users. If no admins exist, the returned list
+            will be empty.
+
+        Side Effects:
+            Prints a message to stdout if no admins are found.
+        """
+        admins = [
+            user for user in self.user_repository.get_all() if isinstance(user, Admin)
+        ]
+        if not admins:
+            return self.failure("No admin user found in the system.")
+        return self.success("All admins have been retrieved.", admins)

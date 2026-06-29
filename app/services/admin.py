@@ -60,7 +60,7 @@ class AdminService(Service):
             return self.failure("Failed to create staff.")
 
         return self.success(
-            f"Train '{new_staff.data.username}' has been registered successfully.",
+            f"Staff '{new_staff.data.username}' has been registered successfully.",
             new_staff.data,
         )
 
