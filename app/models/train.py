@@ -1,3 +1,5 @@
+from datetime import time
+
 from app.models.base import Model
 
 
@@ -5,32 +7,36 @@ class Train(Model):
     """
     Represents a train available for booking in the railway system.
 
-    A train has operational characteristics such as its average velocity,
-    stop time, service quality, ticket price, and passenger capacity.
-    The class also provides a method to book a seat on the train.
+    A train belongs to a railway and contains operational information such as
+    its travel speed, route distance, station stop time, service quality,
+    ticket price, passenger capacity, and scheduled departure time. The class
+    is used to model trains that passengers can book seats on.
 
     Args:
-        name (str): The name or identifier of the train.
-        railway_id (str | None): The unique identifier of the railway operating the train,
-            or None if the train is currently unassigned.
-        average_velocity (float): The train's average travel speed.
-        stop_time (float): The average stop duration at stations.
-        quality_index (float): A numerical score representing the quality or comfort level of the train service.
+        name (str): Unique name or identifier of the train.
+        railway_id (str | None): Identifier of the railway operating the train. Can be None if the train is not currently assigned to a railway.
+        average_velocity (float): Average travel speed of the train.
+        stop_time (float): Total stop duration at stations during the journey.
+        quality_index (float): Service quality rating (typically between 0 and 10).
         ticket_price (float): Price of a single ticket for this train.
-        capacity (int): The current number of available seats on the train.
-        max_capacity (int): The original total capacity of the train.
+        capacity (int): Total number of seats available on the train.
+        travel_distance (int): Distance of the train route.
+        start_time (time): Scheduled departure time of the train.
 
     Attributes:
-        name (str): The train's name.
-        railway_id (str | None): The unique identifier for the railway operator.
-            Can be None if the railway has been deleted or the train is not in service.
-        average_velocity (float): Average travel speed of the train.
-        stop_time (float): Average stop duration at stations.
+        name (str): The train's unique name.
+        railway_id (str | None): Identifier of the railway that operates the train.
+        average_velocity (float): Average speed of the train during travel.
+        stop_time (float): Total time spent stopped at stations.
         quality_index (float): Quality rating of the train service.
-        ticket_price (float): Cost of a ticket for this train.
-        capacity (int): The initial total number of seats available.
+        ticket_price (float): Cost of a single passenger ticket.
+        capacity (int): Current number of available seats remaining.
+        max_capacity (int): Maximum seat capacity of the train.
+        travel_distance (int): Total distance of the train route.
+        start_time (time): Scheduled departure time of the train.
     """
 
+    # TODO: update docstrings
     def __init__(
         self,
         name: str,
@@ -40,6 +46,8 @@ class Train(Model):
         quality_index: float,
         ticket_price: float,
         capacity: int,
+        travel_distance: int,
+        start_time: time,
     ) -> None:
         super().__init__()
         self.name = name
@@ -50,6 +58,10 @@ class Train(Model):
         self.ticket_price = ticket_price
         self.capacity = capacity
         self.max_capacity = capacity
+        self.travel_distance = (
+            travel_distance  # TODO: This field should be defined as a Railway property
+        )
+        self.start_time = start_time
 
     @property
     def average_velocity(self) -> float:
@@ -114,6 +126,44 @@ class Train(Model):
         if value <= 0:
             raise ValueError("Max capacity must be greater than zero")
         self._max_capacity = value
+
+    @property
+    def travel_distance(self) -> int:
+        """
+        Get the travel distance of the train.
+
+        Returns:
+            int: The total distance the train travels on its route.
+        """
+        return self._travel_distance
+
+    @travel_distance.setter
+    def travel_distance(self, value: int) -> None:
+        """
+        Set the travel distance of the train.
+
+        Args:
+            value (int): The distance the train travels.
+
+        Raises:
+            ValueError: If the distance is less than or equal to zero.
+        """
+        if value <= 0:
+            raise ValueError("Travel distance must be greater than zero")
+        self._travel_distance = value
+
+    @property
+    def travel_time(self) -> float:
+        """
+        Calculate the estimated travel time of the train.
+
+        The travel time is computed using the train's travel distance
+        divided by its average velocity.
+
+        Returns:
+            float: Estimated travel time for the route.
+        """
+        return self.travel_distance / self.average_velocity
 
     def book(self) -> None:
         """
