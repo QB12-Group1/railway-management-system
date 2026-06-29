@@ -36,10 +36,24 @@ The system supports three main user types:
 
 ## 🚀 Running the Project
 
-Set up your environment and launch the app using:
+### Using uv (recommended)
 
 ```bash
 uv run -m app.main
+```
+
+### Using standard Python
+
+If you prefer to run it without `uv`, activate your environment and run:
+
+```bash
+python -m app.main
+```
+
+or on some systems:
+
+```bash
+python3 -m app.main
 ```
 
 ## 🔮 Future Improvements
