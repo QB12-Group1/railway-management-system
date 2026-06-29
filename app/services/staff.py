@@ -1,3 +1,5 @@
+from datetime import datetime, time, timedelta
+
 from app.models.railway import Railway
 from app.models.train import Train
 from app.repositories.railway import RailwayRepository
@@ -163,22 +165,35 @@ class StaffService(Service):
         quality_index: float,
         ticket_price: float,
         capacity: int,
+        travel_distance: int,
+        start_time: time,
     ) -> ServiceResult[Train]:
         """
-        Register a new train in the system.
+        Register a new train in the system and assign it to a railway.
+
+        The method performs several validations before creating the train:
+        - Ensures the train name is unique.
+        - Verifies that the specified railway exists.
+        - Validates numerical parameters such as velocity, ticket price,
+        capacity, and quality index.
+        - Detects potential timetable collisions with other trains operating
+        on the same railway.
 
         Args:
-            name (str): Unique name of the train.
-            railway_name (str): Name of the railway it operates on.
+            name (str): Unique identifier for the train.
+            railway_name (str): Name of the railway the train operates on.
             average_velocity (float): Average speed of the train.
-            stop_time (float): Total stop time at stations.
-            quality_index (float): Quality rating (0-10).
-            ticket_price (float): Base price for a ticket.
-            capacity (int): Total seat capacity.
+            stop_time (float): Total time the train stops at stations (minutes).
+            quality_index (float): Service quality rating (expected range: 0–10).
+            ticket_price (float): Base ticket price for passengers.
+            capacity (int): Total number of seats available on the train.
+            travel_distance (int): Distance of the route covered by the train.
+            start_time (time): Departure time of the train.
 
         Returns:
-            ServiceResult[Train]: A success result containing the newly
-            created Train instance, or a failure result.
+            ServiceResult[Train]:
+                - Success: Contains the created Train instance.
+                - Failure: Contains a descriptive error message explaining why the train could not be registered.
         """
         if self.train_repository.exists_by_name(name):
             return self.failure(f"A train named '{name}' already exists.")
@@ -213,9 +228,60 @@ class StaffService(Service):
                 quality_index,
                 ticket_price,
                 capacity,
+                travel_distance,
+                start_time,
             )
         except ValueError as e:
             return self.failure(f"Invalid train data: {e}")
+
+        trains_on_same_railway = [
+            item
+            for item in self.train_repository.items
+            if item.railway_id == railway.id
+        ]
+        for existing_train in trains_on_same_railway:
+            current_date = datetime.now()
+
+            new_train_travel_hours, new_train_travel_minutes = divmod(
+                train.travel_time, 60
+            )
+            existing_train_travel_hours, existing_train_travel_minutes = divmod(
+                existing_train.travel_time, 60
+            )
+            existing_train_stop_hours, existing_train_stop_minutes = divmod(
+                existing_train.stop_time, 60
+            )
+
+            new_train_arrival_time = datetime(
+                current_date.year,
+                current_date.month,
+                current_date.day,
+                train.start_time.hour,
+                train.start_time.minute,
+            ) + timedelta(
+                hours=new_train_travel_hours, minutes=new_train_travel_minutes
+            )
+
+            existing_train_arrival_time = datetime(
+                current_date.year,
+                current_date.month,
+                current_date.day,
+                existing_train.start_time.hour,
+                existing_train.start_time.minute,
+            ) + timedelta(
+                hours=existing_train_travel_hours,
+                minutes=existing_train_travel_minutes,
+            )
+
+            existing_train_departure_time = existing_train_arrival_time + timedelta(
+                hours=existing_train_stop_hours,
+                minutes=existing_train_stop_minutes,
+            )
+            if new_train_arrival_time < existing_train_departure_time:
+                return self.failure(
+                    f"Schedule collision detected with train '{existing_train.name}' "
+                    f"on railway '{railway.name}'. ヽ(*。>Д<)o゜"
+                )
 
         self.train_repository.add(train)
         return self.success(f"Train '{name}' has been registered successfully.", train)

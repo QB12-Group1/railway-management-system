@@ -1,3 +1,4 @@
+from datetime import time
 from typing import TYPE_CHECKING
 
 from app.menus.base import BaseMenu
@@ -36,17 +37,17 @@ class TrainManagementMenu(BaseMenu):
             self.cancel_operation(controller)
             return
 
-        average_velocity = self.get_required_feedback("Average velocity: ")
+        average_velocity = self.get_required_feedback("Average velocity (km/h): ")
         if average_velocity is None:
             self.cancel_operation(controller)
             return
 
-        stop_time = self.get_required_feedback("Stop time: ")
+        stop_time = self.get_required_feedback("Stop time (minutes): ")
         if stop_time is None:
             self.cancel_operation(controller)
             return
 
-        quality_index = self.get_required_feedback("Quality index: ")
+        quality_index = self.get_required_feedback("Quality index (0-10): ")
         if quality_index is None:
             self.cancel_operation(controller)
             return
@@ -61,12 +62,36 @@ class TrainManagementMenu(BaseMenu):
             self.cancel_operation(controller)
             return
 
+        travel_distance = self.get_required_feedback("Travel distance (km): ")
+        if travel_distance is None:
+            self.cancel_operation(controller)
+            return
+
+        start_time = self.get_required_feedback("Start Time (hours-minutes): ")
+        if start_time is None:
+            self.cancel_operation(controller)
+            return
+
+        start_time_lst = start_time.split("-")
+        if len(start_time_lst) == 2 and all(i.isdigit() for i in start_time_lst):
+            hour, minute = map(int, start_time_lst)
+            if not (0 <= hour < 24 and 0 <= minute < 60):
+                print("Invalid time range")
+                self.pause()
+                return
+        else:
+            print("Invalid time format")
+            self.pause()
+            return
+
         try:
             average_velocity = float(average_velocity)
             stop_time = float(stop_time)
             quality_index = float(quality_index)
             ticket_price = float(ticket_price)
             capacity = int(capacity)
+            travel_distance = int(travel_distance)
+            start_time = time(hour=hour, minute=minute)
         except ValueError:
             print("Invalid input! Please enter a valid number.")
             self.pause()
@@ -80,6 +105,8 @@ class TrainManagementMenu(BaseMenu):
             quality_index,
             ticket_price,
             capacity,
+            travel_distance,
+            start_time,
         )
         print(result.message)
         self.pause()
@@ -118,17 +145,17 @@ class TrainManagementMenu(BaseMenu):
             self.cancel_operation(controller)
             return
 
-        average_velocity = self.get_feedback("New average velocity: ") or None
+        average_velocity = self.get_feedback("New average velocity (km/h): ") or None
         if average_velocity is not None and self.is_cancel_command(average_velocity):
             self.cancel_operation(controller)
             return
 
-        stop_time = self.get_feedback("New stop time: ") or None
+        stop_time = self.get_feedback("New stop time (minutes): ") or None
         if stop_time is not None and self.is_cancel_command(stop_time):
             self.cancel_operation(controller)
             return
 
-        quality_index = self.get_feedback("New quality index: ") or None
+        quality_index = self.get_feedback("New quality index (0-10): ") or None
         if quality_index is not None and self.is_cancel_command(quality_index):
             self.cancel_operation(controller)
             return
