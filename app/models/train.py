@@ -146,6 +146,6 @@ class Train(Model):
             f"speed = {self.average_velocity:.1f} km/h | "
             f"stop = {self.stop_time:.1f} min | "
             f"quality = {self.quality_index:.1f} | "
-            f"start_time = {self.start_time} | "
+            f"departure_time = {self.start_time} | "
             f"railway = {railway}"
         )

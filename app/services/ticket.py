@@ -11,6 +11,7 @@ from app.repositories.train import TrainRepository
 from app.repositories.transaction import TransactionRepository
 from app.repositories.user import UserRepository
 from app.services.base import Service, ServiceResult
+from app.utils.file_utils import get_data_path
 
 
 class TicketService(Service):
@@ -152,27 +153,28 @@ class TicketService(Service):
             tickets,
         )
 
-    def export_tickets_to_file(self, file_path: str) -> ServiceResult[None]:
+    def export_tickets_to_file(self, file_name: str) -> ServiceResult[None]:
         """
-        Exports all existing tickets to a specified file.
+        Exports all existing tickets to a file within the 'data/' directory.
 
-        Each line in the file will contain details about a ticket, including
-        customer name, destination, train information, and price.
+        This method generates a text file where each line contains comprehensive
+        details of a ticket, including the unique ID, purchase timestamp, customer
+        information, destination, and train specifics.
 
         Args:
-            file_path: The path to the file where tickets should be exported.
+            file_name (str): The name of the file to be created. This will be automatically placed inside the system's 'data/' directory.
 
         Returns:
-            A ServiceResult indicating success or failure of the export operation.
-            If a ticket references a non-existent customer or train, it will be
-            skipped in the export, but the operation will still be considered successful
-            if other tickets are exported.
+            ServiceResult[None]:
+                - Success: If the file is created and at least one ticket is written.
+                - Failure: If no tickets exist, or if an I/O error occurs.
         """
         tickets = self.ticket_repository.get_all()
 
         if not tickets:
             return self.failure("No tickets found in the system to export.")
 
+        file_path = get_data_path(file_name)
         try:
             with open(file_path, mode="w") as file:
                 for ticket in tickets:
@@ -185,12 +187,15 @@ class TicketService(Service):
                     if train is None:
                         train_name = "Unknown Train"
                         train_id = ticket.train_id
+                        train_departure_time = "N/A"
                     else:
                         train_name = train.name
                         train_id = train.id
+                        train_departure_time = train.start_time
 
                     file.write(
                         f"Ticket ID: {ticket.id} | "
+                        f"Departure Time: {train_departure_time} | "
                         f"Purchase Time: {ticket.purchase_time} | "
                         f"Customer: {customer.full_name} (ID: {customer.id}) | Destination: {ticket.destination_station} | "
                         f"Train: {train_name} (ID: {train_id}) | Price: {ticket.ticket_price}\n"

@@ -44,6 +44,7 @@ class Ticket(Model):
     def get_str(self, customer: Customer, train: Train) -> str:
         return (
             f"Ticket ID: {self.id} | "
+            f"Departure Time: {train.start_time} | "
             f"Purchase Time: {self.purchase_time} | "
             f"Customer: {customer.full_name} (ID: {customer.id}) | Destination: {self.destination_station} | "
             f"Train: {train.name} (ID: {train.id}) | Price: {self.ticket_price}\n"

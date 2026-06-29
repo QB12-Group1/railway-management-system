@@ -219,3 +219,6 @@ __marimo__/
 
 # Python version stuff for uv
 .python-version
+
+# Data files
+data/
