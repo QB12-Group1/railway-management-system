@@ -30,7 +30,12 @@ class StaffService(Service):
         self.train_repository = train_repository
 
     def add_railway(
-        self, name: str, origin: str, destination: str, stations: list[str]
+        self,
+        name: str,
+        origin: str,
+        destination: str,
+        stations: list[str],
+        travel_distance: int,
     ) -> ServiceResult[Railway]:
         """
         Register a new railway route in the system.
@@ -40,6 +45,8 @@ class StaffService(Service):
             origin (str): Starting station name.
             destination (str): Ending station name.
             stations (list[str]): List of stations included in the route.
+            travel_distance (int): Total distance of the railway in kilometers.
+
 
         Returns:
             ServiceResult[Railway]: A success result containing the newly
@@ -52,7 +59,7 @@ class StaffService(Service):
         if not result.success:
             return self.failure(result.message)
 
-        railway = Railway(name, origin, destination, stations)
+        railway = Railway(name, origin, destination, stations, travel_distance)
         self.railway_repository.add(railway)
         return self.success(
             f"Railway '{name}' has been registered successfully.", railway
@@ -165,7 +172,6 @@ class StaffService(Service):
         quality_index: float,
         ticket_price: float,
         capacity: int,
-        travel_distance: int,
         start_time: time,
     ) -> ServiceResult[Train]:
         """
@@ -187,7 +193,6 @@ class StaffService(Service):
             quality_index (float): Service quality rating (expected range: 0–10).
             ticket_price (float): Base ticket price for passengers.
             capacity (int): Total number of seats available on the train.
-            travel_distance (int): Distance of the route covered by the train.
             start_time (time): Departure time of the train.
 
         Returns:
@@ -228,7 +233,6 @@ class StaffService(Service):
                 quality_index,
                 ticket_price,
                 capacity,
-                travel_distance,
                 start_time,
             )
         except ValueError as e:
@@ -242,11 +246,14 @@ class StaffService(Service):
         for existing_train in trains_on_same_railway:
             current_date = datetime.now()
 
-            new_train_travel_hours, new_train_travel_minutes = divmod(
-                train.travel_time, 60
+            travel_time = railway.travel_distance / train.average_velocity
+            existing_train_travel_time = (
+                railway.travel_distance / existing_train.average_velocity
             )
+
+            new_train_travel_hours, new_train_travel_minutes = divmod(travel_time, 60)
             existing_train_travel_hours, existing_train_travel_minutes = divmod(
-                existing_train.travel_time, 60
+                existing_train_travel_time, 60
             )
             existing_train_stop_hours, existing_train_stop_minutes = divmod(
                 existing_train.stop_time, 60

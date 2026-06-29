@@ -46,11 +46,23 @@ class RailwayManagementMenu(BaseMenu):
             self.cancel_operation(controller)
             return
 
+        travel_distance = self.get_required_feedback("Travel distance (km): ")
+        if travel_distance is None:
+            self.cancel_operation(controller)
+            return
+        try:
+            travel_distance = int(travel_distance)
+        except ValueError:
+            print("Invalid input! Please enter a valid number.")
+            self.pause()
+            return
+
         stations = [s.strip() for s in stations_input.split(",")]
 
         result = controller.services.staff.add_railway(
-            name, origin, destination, stations
+            name, origin, destination, stations, travel_distance
         )
+
         print(result.message)
         self.pause()
 

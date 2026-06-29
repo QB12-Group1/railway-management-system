@@ -139,7 +139,9 @@ class TicketService(Service):
             )
         )
         try:
-            self.transaction_repository.export_to_file("transactions.txt")
+            self.transaction_repository.export_customer_transactions(
+                customer_id=customer_id, username=customer.username
+            )
         except Exception as e:
             return self.failure(
                 f"An unexpected error occurred during ticket export: {str(e)}"

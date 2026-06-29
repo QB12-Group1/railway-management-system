@@ -62,11 +62,6 @@ class TrainManagementMenu(BaseMenu):
             self.cancel_operation(controller)
             return
 
-        travel_distance = self.get_required_feedback("Travel distance (km): ")
-        if travel_distance is None:
-            self.cancel_operation(controller)
-            return
-
         start_time = self.get_required_feedback("Start Time (hours-minutes): ")
         if start_time is None:
             self.cancel_operation(controller)
@@ -90,7 +85,6 @@ class TrainManagementMenu(BaseMenu):
             quality_index = float(quality_index)
             ticket_price = float(ticket_price)
             capacity = int(capacity)
-            travel_distance = int(travel_distance)
             start_time = time(hour=hour, minute=minute)
         except ValueError:
             print("Invalid input! Please enter a valid number.")
@@ -105,7 +99,6 @@ class TrainManagementMenu(BaseMenu):
             quality_index,
             ticket_price,
             capacity,
-            travel_distance,
             start_time,
         )
         print(result.message)
