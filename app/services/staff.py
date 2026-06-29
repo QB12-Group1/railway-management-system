@@ -247,18 +247,21 @@ class StaffService(Service):
         today = datetime.now().date()
         new_start = datetime.combine(today, train.start_time)
         new_travel_minutes = (railway.travel_distance / train.average_velocity) * 60
-        new_end = new_start + timedelta(minutes=new_travel_minutes + train.stop_time)
+        new_arrival = new_start + timedelta(minutes=new_travel_minutes)
 
         for existing_train in trains_on_same_railway:
             existing_start = datetime.combine(today, existing_train.start_time)
             existing_travel_minutes = (
                 railway.travel_distance / existing_train.average_velocity
             ) * 60
-            existing_end = existing_start + timedelta(
-                minutes=existing_travel_minutes + existing_train.stop_time
+            existing_arrival = existing_start + timedelta(
+                minutes=existing_travel_minutes
+            )
+            existing_departure = existing_arrival + timedelta(
+                minutes=existing_train.stop_time
             )
 
-            if new_start < existing_end and existing_start < new_end:
+            if existing_arrival <= new_arrival <= existing_departure:
                 return self.failure(
                     f"Schedule collision detected with train '{existing_train.name}' "
                     f"on railway '{railway.name}'."
