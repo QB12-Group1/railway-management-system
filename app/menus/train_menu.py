@@ -47,7 +47,7 @@ class TrainManagementMenu(BaseMenu):
             self.cancel_operation(controller)
             return
 
-        quality_index = self.get_required_feedback("Quality index (0-10): ")
+        quality_index = self.get_required_feedback("Quality index (1-10): ")
         if quality_index is None:
             self.cancel_operation(controller)
             return
@@ -148,7 +148,7 @@ class TrainManagementMenu(BaseMenu):
             self.cancel_operation(controller)
             return
 
-        quality_index = self.get_feedback("New quality index (0-10): ") or None
+        quality_index = self.get_feedback("New quality index (1-10): ") or None
         if quality_index is not None and self.is_cancel_command(quality_index):
             self.cancel_operation(controller)
             return
