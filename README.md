@@ -1,236 +1,68 @@
-# Railway Management System
+# Railway Management System 🚆
 
-Terminal project for managing railway operations.
+A terminal-based application for managing railway operations, staff workflows, and customer services. Designed for clarity, maintainability, and extensibility—perfect for team learning and future growth!
 
----
+## 🏗️ Architecture: MVC Pattern
 
-## Prerequisites
+This project follows a Model-View-Controller (MVC) style layered architecture to ensure clean, maintainable code:
 
-Before setting up the project, install the following tools:
+- **`app/models/`**: Data models; defines how railway entities are represented.
+- **`app/repositories/`**: Storage layer; handles only raw storage logic, no validation or business rules.
+- **`app/services/`**: Business logic layer; handles validation, orchestrates actions, interacts with repositories, and enforces rules.
+- **`app/menus/`**: Terminal UI; a stack-based menu manager that talks to services and displays results to the user.
 
-### 1. Node.js (Required for Pyright)
+## 🗃️ Data Storage
 
-Pyright is written in TypeScript and requires Node.js.
+Currently, data is stored in-memory within `app/repositories/` and is lost when the app closes.
+_Note: Future updates will implement persistent JSON storage using Pydantic serialization._
 
-- **Download:** [nodejs](https://nodejs.org/en/download/current)
-- **Verify:**
+## 👥 User Roles
 
-  ```bash
-  node --version
-  npm --version
-  ```
+The system supports three main user types:
 
-### 2. uv (Python dependency manager)
+### 👑 Admin
 
-This project uses **uv** for dependency management and running tools.
+- Manage staff members.
 
-#### Linux / macOS
+### 🚉 Staff
 
-If you have **curl**:
+- Manage railways and trains.
 
-```bash
-curl -LsSf https://astral.sh/uv/install.sh | sh
-```
+### 🎫 Customer
 
-If you do **not** have curl:
+- Manage wallet.
+- Buy and manage tickets.
+- Update profile information.
 
-```bash
-wget -qO- https://astral.sh/uv/install.sh | sh
-```
+## 🚀 Running the Project
 
-#### Windows (PowerShell)
-
-```powershell
-powershell -ExecutionPolicy ByPass -c "irm https://astral.sh/uv/install.ps1 | iex"
-```
-
-#### Alternative: Install with pip
+Set up your environment and launch the app using:
 
 ```bash
-pip install uv
+uv run -m app.main
 ```
 
-#### Verify Installation
+## 🔮 Future Improvements
 
-```bash
-uv --version
-```
+We plan to expand and polish this project with the following integrations:
 
-_(If the command is not found, restart your terminal so the path is added to your environment.)_
+- **Rich**: For beautiful terminal output.
+- **Pydantic**: For flexible, validated data models.
+- **InquirerPy**: For interactive terminal menus.
+- **Loguru**: For slick logging.
+- **JSON persistence**: Using Pydantic serialization.
 
----
+## 📚 Contributing
 
-# Getting Started
+We welcome contributions! Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for details on our development workflow and setup instructions.
 
-```bash
-git clone https://github.com/QB12-Group1/railway-management-system.git
-cd railway-management-system
-uv sync --group dev
-uv run pre-commit install
-```
+- Open PRs into the `dev` branch.
+- When `dev` is stable, it will be merged into `main`.
 
----
+## 📝 Project Vision
 
-# Working on a Task / Feature
+Our goal is to create a structured, extensible terminal app for multi-role railway management. We aim to keep the codebase clean, layered, and easy to grow as new features are added.
 
-All development happens on **feature branches created from `dev`**.
+##📄 License
 
-Branch format:
-
-```
-feature/<your-name>/<task-name>
-```
-
-Example:
-
-```
-feature/ali/implement-railway-model
-feature/ilia/implement-train-model
-```
-
----
-
-## Step‑by‑Step Workflow
-
-### 1. Checkout `dev` and pull the latest updates
-
-Always start from the latest version of `dev`.
-
-```bash
-git checkout dev
-git pull origin dev
-```
-
----
-
-### 2. Create your feature branch
-
-Create a new branch for your assigned task.
-
-```bash
-git checkout -b feature/<your-name>/<task-name>
-```
-
-Example:
-
-```bash
-git checkout -b feature/ilia/implement-train-model
-```
-
-Each branch should represent **one task or feature**.
-
----
-
-### 3. Start working on your task
-
-Make the changes needed for your feature or bug fix.
-
----
-
-### 4. Add your changes
-
-Stage the files you modified.
-
-```bash
-git add .
-```
-
----
-
-### 5. Commit your changes
-
-```bash
-git commit -m "describe your change"
-```
-
-Example:
-
-```bash
-git commit -m "Implement Train Model"
-```
-
----
-
-### 6. Push your branch
-
-Push your feature branch to GitHub.
-
-```bash
-git push -u origin feature/<your-name>/<task-name>
-```
-
-Example:
-
-```bash
-git push -u origin feature/ilia/implement-train-model
-```
-
----
-
-### 7. Open a Pull Request
-
-Open a PR on GitHub:
-
-```
-feature/<your-name>/<task-name> → dev
-```
-
-Your code will be reviewed before merging.
-
-After the PR is merged, the feature branch will be deleted.
-
----
-
-# Keeping Your Branch Updated
-
-If `dev` changes while you are working, update your branch.
-
-```bash
-git checkout dev
-git pull origin dev
-git checkout feature/<your-name>/<task-name>
-git merge dev
-```
-
-Resolve conflicts if necessary, then push again.
-
----
-
-# Code Quality Checks (Pre-commit)
-
-This repository uses **pre-commit hooks** to automatically check code quality before every commit.
-
-Tools used:
-
-- **Ruff** – linting and formatting
-- **Pyright** – static type checking
-- **pre-commit hooks** – whitespace fixes and file checks
-
-If checks fail:
-
-1. Read the error output
-2. Fix the issue
-3. Stage the changes again
-4. Commit again
-
-Example:
-
-```bash
-git add .
-git commit -m "add train scheduling logic"
-```
-
-If Ruff auto-fixes files you may need to stage again:
-
-```bash
-git add .
-git commit -m "add train scheduling logic"
-```
-
-Run checks manually:
-
-```bash
-uv run pre-commit run --all-files
-```
-
-Make sure your code passes all checks before pushing.
+This project is licensed under the [MIT License](LICENSE) - see the [LICENSE](LICENSE) file for details.dd a license here if/when the project adopts one.
