@@ -19,6 +19,7 @@ class WalletMenu(BaseMenu):
                 "Charge Wallet": self.charge_wallet,
                 "Link Card": self.link_card,
                 "My Card": self.show_card,
+                "Show Transactions": self.show_transactions,
                 "Go back": lambda controller: controller.pop(),
             },
         )
@@ -120,4 +121,19 @@ class WalletMenu(BaseMenu):
         print(
             f"Expiry: {card.expiration_year}/{('0' if card.expiration_month < 10 else '') + str(card.expiration_month)}"
         )
+        self.pause()
+
+    def show_transactions(self, controller: MenuController) -> None:
+        self.show_title("Recent Transactions (Last 5)")
+
+        result = controller.services.wallet.get_transactions(self._customer.id)
+
+        if not result.success or not result.data:
+            print(result.message)
+            self.pause()
+            return
+
+        for transaction in result.data:
+            print(transaction)
+
         self.pause()

@@ -1,5 +1,9 @@
+import time
+
 from app.models.debit_card import DebitCard
+from app.models.transaction import Transaction, TransactionType
 from app.models.user import Customer
+from app.repositories.transaction import TransactionRepository
 from app.repositories.user import UserRepository
 from app.services.base import Service, ServiceResult
 
@@ -9,17 +13,23 @@ class WalletService(Service):
     Service responsible for managing customer wallets and payment methods.
 
     This service handles the linking of debit cards to customer accounts
-    and manages balance-related operations like charging the wallet.
+    , manages balance-related operations and records all transactons .
     """
 
-    def __init__(self, user_repository: UserRepository) -> None:
+    def __init__(
+        self,
+        user_repository: UserRepository,
+        transaction_repository: TransactionRepository,
+    ) -> None:
         """
         Initialize the WalletService.
 
         Args:
             user_repository (UserRepository): The repository used to retrieve and update users.
+            transaction_Repository (TransactionRepository):Repository for transactions.
         """
         self.user_repository = user_repository
+        self.transaction_repository = transaction_repository
 
     def link_card(
         self,
@@ -66,7 +76,7 @@ class WalletService(Service):
 
     def charge_wallet(self, username: str, amount: float) -> ServiceResult[float]:
         """
-        Increase the balance of a customer's wallet using their linked card.
+        Increase the balance of a customer's wallet and record the transaction.
 
         Args:
             username (str): The username of the customer.
@@ -92,7 +102,35 @@ class WalletService(Service):
             return self.failure("Charge amount must be positive.")
 
         user.wallet.charge(amount)
+
+        transaction = Transaction(
+            user.id,
+            amount,
+            TransactionType.CHARGE,
+            user.wallet.balance,
+            time.strftime("%Y-%m-%d | %H:%M:%S", time.localtime()),
+        )
+        self.transaction_repository.add(transaction)
+        try:
+            self.transaction_repository.export_to_file("transactions.txt")
+        except Exception as e:
+            return self.failure(
+                f"An unexpected error occurred during ticket export: {str(e)}"
+            )
+
         return self.success(
             f"Wallet charged successfully. New balance: {user.wallet.balance}",
             user.wallet.balance,
+        )
+
+    def get_transactions(self, customer_id: str) -> ServiceResult[list[Transaction]]:
+        transactions = self.transaction_repository.get_all_by_customer_id(
+            customer_id, limit=5
+        )
+
+        if not transactions:
+            return self.failure("No transaction found")
+
+        return self.success(
+            f"Found{len(transactions)} recent transaction(s).", transactions
         )
