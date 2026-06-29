@@ -11,7 +11,6 @@ class Railway(Model):
         destination (str): The final station of the railway line.
         stations (list[str]): Ordered list of stations between the origin and destination.
         travel_distance (int): Total distance of the railway in kilometers.
-
     """
 
     def __init__(
@@ -47,9 +46,6 @@ class Railway(Model):
     def route(self) -> str:
         return " -> ".join(self.all_stations)
 
-    def __str__(self) -> str:
-        return f"{self.__class__.__name__}[{self.name}]: {self.route} ({self.travel_distance})"
-
     @property
     def travel_distance(self) -> int:
         """
@@ -73,3 +69,6 @@ class Railway(Model):
         if value <= 0:
             raise ValueError("Travel distance must be greater than zero")
         self._travel_distance = value
+
+    def __str__(self) -> str:
+        return f"{self.__class__.__name__}[{self.name}]: {self.route} ({self.travel_distance} km)"

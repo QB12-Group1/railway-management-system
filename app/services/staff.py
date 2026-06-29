@@ -243,51 +243,25 @@ class StaffService(Service):
             for item in self.train_repository.items
             if item.railway_id == railway.id
         ]
+
+        today = datetime.now().date()
+        new_start = datetime.combine(today, train.start_time)
+        new_travel_minutes = (railway.travel_distance / train.average_velocity) * 60
+        new_end = new_start + timedelta(minutes=new_travel_minutes + train.stop_time)
+
         for existing_train in trains_on_same_railway:
-            current_date = datetime.now()
-
-            travel_time = railway.travel_distance / train.average_velocity
-            existing_train_travel_time = (
+            existing_start = datetime.combine(today, existing_train.start_time)
+            existing_travel_minutes = (
                 railway.travel_distance / existing_train.average_velocity
+            ) * 60
+            existing_end = existing_start + timedelta(
+                minutes=existing_travel_minutes + existing_train.stop_time
             )
 
-            new_train_travel_hours, new_train_travel_minutes = divmod(travel_time, 60)
-            existing_train_travel_hours, existing_train_travel_minutes = divmod(
-                existing_train_travel_time, 60
-            )
-            existing_train_stop_hours, existing_train_stop_minutes = divmod(
-                existing_train.stop_time, 60
-            )
-
-            new_train_arrival_time = datetime(
-                current_date.year,
-                current_date.month,
-                current_date.day,
-                train.start_time.hour,
-                train.start_time.minute,
-            ) + timedelta(
-                hours=new_train_travel_hours, minutes=new_train_travel_minutes
-            )
-
-            existing_train_arrival_time = datetime(
-                current_date.year,
-                current_date.month,
-                current_date.day,
-                existing_train.start_time.hour,
-                existing_train.start_time.minute,
-            ) + timedelta(
-                hours=existing_train_travel_hours,
-                minutes=existing_train_travel_minutes,
-            )
-
-            existing_train_departure_time = existing_train_arrival_time + timedelta(
-                hours=existing_train_stop_hours,
-                minutes=existing_train_stop_minutes,
-            )
-            if new_train_arrival_time < existing_train_departure_time:
+            if new_start < existing_end and existing_start < new_end:
                 return self.failure(
                     f"Schedule collision detected with train '{existing_train.name}' "
-                    f"on railway '{railway.name}'. ヽ(*。>Д<)o゜"
+                    f"on railway '{railway.name}'."
                 )
 
         self.train_repository.add(train)
